@@ -23,17 +23,25 @@ class HomoMat {
 double homoMatrix [4][4];
 
 public:
-	//necessary functions
+	//necessary functions--
+	//constructor
 	HomoMat();
+	//creates a homogenoeus matrix using inputed paramater
 	void UTOI(double x, double y, double z, double angleDeg);
-	frameParam_t ITOU(HomoMat & orig);
+	//returns x,y,z,theta from the homogeneous matrix
+	frameParam_t ITOU();
 	//HomoMat TMULT(HomoMat A, HomoMat &B);
 	HomoMat TINVERT(HomoMat NonInvert);
-	//HomoMat operator * (HomoMat &rightmat);
-	//extra functions
-	void PRINTT(); //prints out entire array
-	//ACCESST(int row ,int column) //allow access to element
-	//MUTATET(int row, int column, int value) //allow modifiable access to element
+	//facilitates multiplication between homogeneous matrices
+	HomoMat operator * (HomoMat &rightmat);
+
+	//extra functions--
+	//prints out entire array
+	void PRINTT(); 
+	//allow access to element
+	double ACCESST(int row ,int column); 
+	//allow modifiable access to element
+	void MUTATET(int row, int column, int value); 
 
 };
 

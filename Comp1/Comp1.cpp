@@ -13,14 +13,75 @@ homoMatrix[3][3]=1;
 
 }
 
-/*
-frameParam_t HomoMat::ITOU(HomoMat & orig){
+
+frameParam_t HomoMat::ITOU(){
+	frameParam_t temp;
+	double c,s; 
+
+	temp.x = homoMatrix [0][3]
+	temp.y = homoMatrix [1][3]
+	temp.z = homoMatrix [2][3]
+
+	c = homoMatrix[0][0]
+	s = homoMatrix[1][0]
+
+	if c == 0 {
+		if s == 0 {
+			temp.theta =0;
+		}
+		else if s== 1 {
+			temp.theta =  PI/2;
+		}
+		else if s == -1 {
+			temp.theta = -1*PI/2;
+		}
+		return;
+	}
+
+	if s == 0 {
+		if c == 0 {
+			temp.theta = 0;
+		}
+		else if c== 1 {
+			temp.theta = 0;
+		}
+		else if c == -1 {
+			temp.theta = PI;
+		}
+		return;
+	}
+
+	temp.theta = atan2(s/c);
 
 }
-HomoMat HomoMat::TINVERT(HomoMat NonInvert){
 
+HomoMat HomoMat::TINVERT(){
+	Homomat temp;
+	double temp,x,y,z;
+
+	//first invert matrices
+	temp = homoMatrix [1,0];
+	homoMatrix [1,0] = homoMatrix [0,1];
+	homoMatrix [0,1] = temp;
+
+	temp = homoMatrix [2,0];
+	homoMatrix [2,0] = homoMatrix [0,2];
+	homoMatrix [0,2] = temp;
+
+	temp = homoMatrix [2,1];
+	homoMatrix [2,1] = homoMatrix [1,2];
+	homoMatrix [1,2] = temp;
+
+	//now invert the translation
+	x = homoMatrix [0][3];
+	y = homoMatrix [1][3];
+	z = homoMatrix [2][3];
+
+    homoMatrix [0,3] = -1*(x*homoMatrix[0,0]+y*homoMatrix[0,1]+z*homoMatrix[0,2]);
+    homoMatrix [1,3] = -1*(x*homoMatrix[1,0]+y*homoMatrix[1,1]+z*homoMatrix[1,2]);
+    homoMatrix [2,3] = -1*(x*homoMatrix[2,0]+y*homoMatrix[2,1]+z*homoMatrix[2,2]);
 }
-*/
+
 
 
 HomoMat HomoMat::operator * (Homomat &rightmat){
@@ -33,7 +94,7 @@ HomoMat HomoMat::operator * (Homomat &rightmat){
 		}
 
 	}
-
+	return temp
 }
 
 
@@ -62,3 +123,13 @@ void HomoMat::UTOI(double x, double y, double z, double angleDeg){
 	homoMatrix [2][2] = 1;
 
 }
+
+double ACCESST(int row ,int column){
+	return homoMatrix[row,column];
+} 
+
+void MUTATET(int row, int column, double value){
+	homoMatrix[row,column] = value;
+}
+
+
