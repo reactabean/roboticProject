@@ -30,8 +30,8 @@ public:
 	void UTOI(double x, double y, double z, double angleDeg);
 	//returns x,y,z,theta from the homogeneous matrix
 	frameParam_t ITOU();
-	//HomoMat TMULT(HomoMat A, HomoMat &B);
-	HomoMat TINVERT(HomoMat NonInvert);
+	//inverts homogeneous matrix 
+	HomoMat TINVERT();
 	//facilitates multiplication between homogeneous matrices
 	HomoMat operator * (HomoMat &rightmat);
 
@@ -41,7 +41,7 @@ public:
 	//allow access to element
 	double ACCESST(int row ,int column); 
 	//allow modifiable access to element
-	void MUTATET(int row, int column, int value); 
+	void MUTATET(int row, int column, double value); 
 
 };
 
