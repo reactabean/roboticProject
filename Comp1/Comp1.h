@@ -10,7 +10,11 @@
 #include <math.h> // this is for arc2tan 
 using namespace std;
 
-#define PI 3.14
+// Define PI as accurately as possible
+#define PI acos(-1.0)
+// In our matrix operations we lose accuracy due to truncation
+// We can assume two values are the same if their difference is less then the tolarance
+#define TOLERANCE 0.00000001
 
 struct frameParam_t{
 double x;
@@ -26,6 +30,8 @@ public:
 	//necessary functions--
 	//constructor
 	HomoMat();
+	//constructor 2
+	HomoMat(double x, double y, double z, double theta);
 	//creates a homogenoeus matrix using inputed paramater
 	void UTOI(double x, double y, double z, double angleDeg);
 	//returns x,y,z,theta from the homogeneous matrix

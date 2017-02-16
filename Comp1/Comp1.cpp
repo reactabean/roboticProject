@@ -7,11 +7,23 @@ HomoMat::HomoMat(){
 for (int row =0; row<4; row = row+1){
 	for (int column =0; column<4; column = column+1){
 		homoMatrix[row][column]=0;
+		if (row == column) {
+			homoMatrix[row][column] = 1;
+		}
 	}
 }
-homoMatrix[3][3]=1;
 }
 
+HomoMat::HomoMat(double x, double y, double z, double theta) {
+	for (int row = 0; row<4; row = row + 1) {
+		for (int column = 0; column<4; column = column + 1) {
+			homoMatrix[row][column] = 0;
+		}
+	}
+	homoMatrix[3][3] = 1;
+
+	UTOI(x, y, z, theta);
+}
 
 frameParam_t HomoMat::ITOU(){
 	frameParam_t temp;
@@ -28,29 +40,14 @@ frameParam_t HomoMat::ITOU(){
 		if (s == 0) {
 			temp.theta =0;
 		}
-		else if (s == 1) {
-			temp.theta =  PI/2;
-		}
-		else if (s == -1) {
-			temp.theta = -1*PI/2;
-		}
-		return temp;
-	}
-
-	if (s == 0) {
-		if (c == 0) {
-			temp.theta = 0;
-		}
-		else if (c== 1) {
-			temp.theta = 0;
-		}
-		else if (c == -1) {
-			temp.theta = PI;
-		}
 		return temp;
 	}
 
 	temp.theta = atan2(s,c);
+
+	if (temp.theta < 0) {
+		temp.theta = temp.theta + 2 * PI;
+	}
 
 	return temp;
 }
@@ -60,20 +57,15 @@ HomoMat HomoMat::TINVERT(){
 
 	HomoMat temp;
 	double x,y,z;
+	int i, k;
+
 
 	//first invert matrices
-	temp.homoMatrix [0][1] = homoMatrix [1][0];
-	temp.homoMatrix [1][0] = homoMatrix [0][1];
-
-	temp.homoMatrix [0][2] = homoMatrix [2][0];
-	temp.homoMatrix [2][0] = homoMatrix [0][2];
-
-	temp.homoMatrix [1][2] = homoMatrix [2][1];
-	temp.homoMatrix [2][1] = homoMatrix [1][2];
-
-	temp.homoMatrix [0][0] = homoMatrix [0][0];
-	temp.homoMatrix [1][1] = homoMatrix [1][1];
-	temp.homoMatrix [2][2] = homoMatrix [2][2];
+	for (i = 0; i < 3; i++) {
+		for (k = 0; k < 3; k++) {
+			temp.homoMatrix[i][k] = homoMatrix[k][i];
+		}
+	}
 
 	//now invert the translation
 	x = homoMatrix [0][3];
