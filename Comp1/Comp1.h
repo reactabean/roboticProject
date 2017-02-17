@@ -24,9 +24,9 @@ double theta;
 };
 
 class HomoMat {
-double homoMatrix [4][4];
 
 public:
+	double homoMatrix[4][4];
 	//necessary functions--
 	//constructor
 	HomoMat();
