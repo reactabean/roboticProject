@@ -4,7 +4,9 @@
 
 #include "Comp2.h"
 
-int theta_1, theta_2, d_3, theta_4;
+// Transformation matrices
+HomoMat T[4];
+
 HomoMat JOINT_TO_MATRIX(int alpha, int a, int d, int theta);
 
 // KIN: Compute the forward kinematics of the planar 3R robot
@@ -12,10 +14,10 @@ HomoMat JOINT_TO_MATRIX(int alpha, int a, int d, int theta);
 // Output: Wrist Frame 
 frameParam_t KIN(JOINT &conf) {
 	// Assign configurations
-	theta_1 = conf[0];
-	theta_2 = conf[1];
-	d_3 = conf[2];
-	theta_4 = conf[3];
+	int theta_1 = conf[0];
+	int theta_2 = conf[1];
+	int d_3 = conf[2];
+	int theta_4 = conf[3];
 
 	// Define D-H frames
 	int alpha[4] = { 0, 0, 0, 180 };
@@ -23,8 +25,7 @@ frameParam_t KIN(JOINT &conf) {
 	int d[4] = { 405, 70, d_3, 270 };
 	int theta[4] = { theta_1, theta_2, 0, theta_4 };
 
-	// T matrices
-	HomoMat T[4];
+	// Transformation matrices
 	for (int i = 0; i < 4; i++) {
 		T[i] = JOINT_TO_MATRIX(alpha[i], a[i], d[i], theta[i]);
 	}
@@ -39,10 +40,10 @@ frameParam_t KIN(JOINT &conf) {
 // Output: Tool Frame 
 frameParam_t WHERE(JOINT &conf) {
 	// Assign configurations
-	theta_1 = conf[0];
-	theta_2 = conf[1];
-	d_3 = conf[2];
-	theta_4 = conf[3];
+	int theta_1 = conf[0];
+	int theta_2 = conf[1];
+	int d_3 = conf[2];
+	int theta_4 = conf[3];
 
 	// Define D-H frames
 	int alpha[4] = { 0, 0, 0, 180 };
@@ -50,8 +51,7 @@ frameParam_t WHERE(JOINT &conf) {
 	int d[4] = { 405, 70, d_3, 270 };
 	int theta[4] = { theta_1, theta_2, 0, theta_4 };
 
-	// T matrices
-	HomoMat T[4];
+	// Transformation matrices
 	for (int i = 0; i < 4; i++) {
 		T[i] = JOINT_TO_MATRIX(alpha[i], a[i], d[i], theta[i]);
 	}
@@ -61,6 +61,22 @@ frameParam_t WHERE(JOINT &conf) {
 	return temp;
 
 }
+
+/*
+// INVKIN: Calculate inverse kinematics for the robot
+// Input: Wrist Frame specifed relative to the station
+// Output: Nearest solution, second solution, flag of solution
+std::tuple<JOINT, JOINT, bool> INVKIN(frameParam_t &wrist) {
+
+}
+
+// SOLVE: Calculate inverse kinematics for the robot
+// Input: Tool Frame specifed relative to the station
+// Output: Nearest solution, second solution, flag of solution
+std::tuple<JOINT, JOINT, bool> SOLVE(frameParam_t &tool) {
+
+}*/
+
 // Convert joint parameters into T matrix
 HomoMat JOINT_TO_MATRIX(int alpha, int a, int d, int theta) {
 	HomoMat temp;
