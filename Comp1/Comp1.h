@@ -11,7 +11,10 @@
 using namespace std;
 
 // Define PI as accurately as possible
+#ifndef PI
 #define PI acos(-1.0)
+#endif
+
 // In our matrix operations we lose accuracy due to truncation
 // We can assume two values are the same if their difference is less then the tolarance
 #define TOLERANCE 0.00000001
