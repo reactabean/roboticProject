@@ -1,5 +1,5 @@
 //library for robot matrix representation
-//by Andrew Nichol 2017
+//by Andrew Nichol ,Feb 2017
 
 #include "Comp1.h"
 

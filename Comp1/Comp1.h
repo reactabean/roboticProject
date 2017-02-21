@@ -1,5 +1,5 @@
 //library for robot matrix representation
-//by Andrew Nichol 2017
+//by Andrew Nichol, Feb 2017
 
 #ifndef COMP1_H
 #define COMP1_H
