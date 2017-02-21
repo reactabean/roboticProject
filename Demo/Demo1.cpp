@@ -6,11 +6,12 @@
 
 #ifndef ENSC488_H
 #define ENSC488_H
-#include "ensc-488.h"
+#include "../ensc-488.h"
 #endif /* ENSC488_H */
 
-#include "Comp1.h"
-#include "Comp2.h"
+#include "../Comp1/Comp1.h"
+#include "../Comp2/Comp2.h"
+#include "../Comp3/Comp3.h"
 using namespace std;
 
 //DEFINE PARAMATERS
@@ -54,7 +55,7 @@ int main(int argc, char* argv[])
 	cout << "'z' for zero position"<<endl ;
 	cout << "'e' to enter joint position"<<endl ;
 	cout << "'f' for forward kinematics on current position"<<endl;
-	cout << "'i' to enter position preform inverse kinematics and move to position"<<endl;
+	cout << "'i' to enter position perform inverse kinematics and move to position"<<endl;
 	cout << "'x' to exit program"<<endl;
 	cout << "============================================="<<endl ;
 	cin>>selection;

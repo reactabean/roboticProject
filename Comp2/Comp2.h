@@ -5,11 +5,11 @@
 #define COMP2_H
 
 #include <tuple>	// For multiple return values
-#include "Comp1.h"
+#include "../Comp1/Comp1.h"
 
 #ifndef ENSC488_H
 #define ENSC488_H
-#include "ensc-488.h"
+#include "../ensc-488.h"
 #endif /* ENSC488_H */
 
 //Define structure parameters

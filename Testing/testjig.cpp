@@ -1,6 +1,7 @@
 
-#include "Comp1.h"
-#include "Comp2.h"
+#include "../Comp1/Comp1.h"
+#include "../Comp2/Comp2.h"
+#include "../Comp3/Comp3.h"
 
 bool testMatrixEquality(double matrix1[4][4], HomoMat matrix2);
 bool testInit();
@@ -26,10 +27,24 @@ testTINVERTandMULTIPLY(HomoMat(1.213, 2.2, -3, 180));
 
 
 JOINT q1 = { 0, 0, -100, 0 };
-JOINT q2 = { 90, 90, -200, 45 };
+JOINT q2 = {90, -45, -200, 45 };
+JOINT q3 = { RAD2DEG(.91), RAD2DEG(.793), -200, 45 };
 testKIN(q1);
 testWHERE(q2);
+testWHERE(q3);
 
+frameParam_t a;
+a.x = 100;
+a.y = 295;
+a.z = 130;
+a.theta = DEG2RAD(0);
+jointReturn J = INVKIN(a);
+
+a.x = -142;
+a.y = 195;
+a.z = 130;
+a.theta = 2.35;
+J = INVKIN(a);
 getchar();
 
 return 0;
@@ -115,14 +130,14 @@ bool isCloseToEqual(double a, double b) {
 
 bool testKIN(JOINT &conf) {
 	frameParam_t Wrist_Frame = KIN(conf);
-	cout << "The position of Wrist Frame for configuration" << conf[0] << ", " << conf[1] << ", " << conf[2] << ", " << conf[3] << ", " 
+	cout << "The position of Wrist Frame for configuration " << conf[0] << ", " << conf[1] << ", " << conf[2] << ", " << conf[3] << ", " 
 		<< "relative to Station is x = " << Wrist_Frame.x << " y = " << Wrist_Frame.y << " z= " << Wrist_Frame.z << " theta =" << Wrist_Frame.theta << endl;
 	return 0;
 }
 
 bool testWHERE(JOINT &conf) {
 	frameParam_t Tool_Frame = WHERE(conf);
-	cout << "The position of Wrist Frame for configuration" << conf[0] << ", " << conf[1] << ", " << conf[2] << ", " << conf[3] << ", "
+	cout << "The position of Wrist Frame for configuration " << conf[0] << ", " << conf[1] << ", " << conf[2] << ", " << conf[3] << ", "
 		<< "relative to Station is x = " << Tool_Frame.x << " y = " << Tool_Frame.y << " z= " << Tool_Frame.z << " theta =" << Tool_Frame.theta << endl;
 	return 0;
 }
