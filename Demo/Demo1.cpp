@@ -1,10 +1,16 @@
 //DEMO 1 script for ENSC 488 Project
-//Andrew Nichol, 2017
+//Andrew Nichol,Feb 2017
 
 #include <iostream> // for cout
 #include <conio.h>
+
+#ifndef ENSC488_H
+#define ENSC488_H
 #include "ensc-488.h"
+#endif /* ENSC488_H */
+
 #include "Comp1.h"
+#include "Comp2.h"
 using namespace std;
 
 //DEFINE PARAMATERS
@@ -36,7 +42,7 @@ bool checkJointCoordinates(JOINT &temp);
 
 int main(int argc, char* argv[])
 {	
-	frameParam_t frameParam;
+	frameParam_t wristFrame;
 	JOINT jointParam;
 	bool works;
 	char selection;
@@ -81,7 +87,18 @@ int main(int argc, char* argv[])
 		break;
 
 		case 'f'  :
-		//TODO: Fill
+		cout<<"------Kinematic analysis being done on current position------"<<endl;
+		GetConfiguration(jointParam);
+		wristFrame = KIN(jointParam);
+		cout << "The Joint positions: [" << jointParam[0] << ", " << jointParam[1] << ", " << jointParam[2] << ", " << jointParam[3] << "] " << endl;
+		
+		//eliminate small values from display
+		if ( (wristFrame.x  > -0.01) && (wristFrame.x < 0.01)) {wristFrame.x =0;}
+		if ( (wristFrame.y  > -0.01) && (wristFrame.y < 0.01)) {wristFrame.y =0;}
+		if ( (wristFrame.z  > -0.01) && (wristFrame.z < 0.01)) {wristFrame.z =0;}
+		if ( (wristFrame.theta  > -0.001) && (wristFrame.theta < 0.001)) {wristFrame.theta = 0;}
+
+		cout << "Relative to Station is: x = " << wristFrame.x << " y = " << wristFrame.y << " z= " << wristFrame.z << " theta =" << RAD2DEG(wristFrame.theta) << endl;
 		break;
 
 		case 'i'  :
@@ -120,16 +137,16 @@ frameParam_t inputCartCoordinates(){
 void inputJointCoordinates(JOINT &temp){
 	cout << "please enter theta1(degrees)"<<endl;
 	cin>>temp[0];
-	//	cout<<"entered digit:"<<temp[0]<<endl; //test funtion remove on final build
+		cout<<"entered digit:"<<temp[0]<<endl; //test funtion remove on final build
 	cout<< "please enter theta2(degrees)"<<endl;
 	cin>>temp[1];
-	//	cout<<"entered digit:"<<temp[1]<<endl; //test funtion remove on final build
+	  	cout<<"entered digit:"<<temp[1]<<endl; //test funtion remove on final build
 	cout<< "please enter distance3(millimeters)"<<endl;
 	cin>>temp[2];
-	//	cout<<"entered digit:"<<temp[2]<<endl; //test funtion remove on final build
+	  	cout<<"entered digit:"<<temp[2]<<endl; //test funtion remove on final build
 	cout << "please enter theta4(degrees)"<<endl;
 	cin>>temp[3];
-	//	cout<<"entered digit:"<<temp[3]<<endl; //test funtion remove on final build
+	  	cout<<"entered digit:"<<temp[3]<<endl; //test funtion remove on final build
 }
 
 
@@ -137,10 +154,10 @@ bool checkJointCoordinates(JOINT &temp){
 	//returns true should the coordinates be within bounds set by paramaters
 	bool clear;
 	clear = 0;
-	if ((temp[0] <HIGHTHEATA1 ) && ( temp[0] >LOWTHEATA1) 
-		&& (temp[1] <HIGHTHEATA2 ) && ( temp[1] > LOWTHEATA12) 
-		&& (temp[2] < HIGHDISTANCE3) && ( temp[2] >LOWDISTANCE3) 
-		&& (temp[3] < HIGHTHEATA4) && ( temp[3] >LOWTHEATA4 ))
+	if ((temp[0] <=HIGHTHEATA1 ) && ( temp[0] >=LOWTHEATA1) 
+		&& (temp[1] <=HIGHTHEATA2 ) && ( temp[1] >= LOWTHEATA12) 
+		&& (temp[2] <= HIGHDISTANCE3) && ( temp[2] >=LOWDISTANCE3) 
+		&& (temp[3] <= HIGHTHEATA4) && ( temp[3] >=LOWTHEATA4 ))
 	{
 		clear =1 ;
 	}
@@ -149,7 +166,7 @@ bool checkJointCoordinates(JOINT &temp){
 
 
 //mark rubric----------------------------------------------
-//Functioning code for basic forward kinematics  : NOT MET
+//Functioning code for basic forward kinematics  : MET
 //30
 //Functioning code for  basic  inverse kinematics: NOT MET
 //35
