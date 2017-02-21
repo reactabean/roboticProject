@@ -6,7 +6,22 @@
 
 #include <tuple>	// For multiple return values
 #include "Comp1.h"
+
+#ifndef ENSC488_H
+#define ENSC488_H
 #include "ensc-488.h"
+#endif /* ENSC488_H */
+
+//Define structure parameters
+#define L1 405
+#define L2 70
+#define L3 195
+#define L4 142
+#define L5 140
+#define L6 80
+#define L7 130
+#define L8 10
+#define Lmax 410
 
 // KIN: Compute the forward kinematics of the robot
 // Input: Joint variables 
@@ -17,15 +32,5 @@ frameParam_t KIN(JOINT &conf);
 // Input: Joint variables 
 // Output: Tool Frame 
 frameParam_t WHERE(JOINT &conf);
-
-// INVKIN: Calculate inverse kinematics for the robot
-// Input: Wrist Frame specifed relative to the station
-// Output: Nearest solution, second solution, flag of solution
-std::tuple<JOINT, JOINT, bool> INVKIN(frameParam_t &wrist);
-
-// SOLVE: Calculate inverse kinematics for the robot
-// Input: Tool Frame specifed relative to the station
-// Output: Nearest solution, second solution, flag of solution
-std::tuple<JOINT, JOINT, bool> SOLVE(frameParam_t &tool);
 
 #endif // !COMP2_H
