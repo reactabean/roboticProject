@@ -22,7 +22,7 @@ frameParam_t KIN(JOINT &conf) {
 	// Define D-H frames
 	int alpha[4] = { 0, 0, 0, 180 };
 	int a[4] = { 0, L3, L4, 0 };
-	int d[4] = { L1, L2, -(Lmax + d_3 - L5), L5 + L6 };
+	int d[4] = { L1, L2, -(Lmax+d_3-L5), L5+L6 };
 	int theta[4] = { theta_1, theta_2, 0, theta_4 };
 
 	// Transformation matrices
@@ -61,7 +61,7 @@ frameParam_t WHERE(JOINT &conf) {
 	// Define D-H frames
 	int alpha[5] = { 0, 0, 0, 180,0 };
 	int a[5] = { 0, L3, L4, 0,0 };
-	int d[5] = { L1, L2, Lmax + d_3 - L5, L5+L6, (L7 - L6 + L8/2) };
+	int d[5] = { L1, L2, -(Lmax+d_3-L5), L5+L6, (L7-L6+L8/2) };
 	int theta[5] = { theta_1, theta_2, 0, theta_4, 0};
 
 	// Transformation matrices
