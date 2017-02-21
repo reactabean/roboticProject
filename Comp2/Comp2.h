@@ -12,17 +12,6 @@
 #include "../ensc-488.h"
 #endif /* ENSC488_H */
 
-//Define structure parameters
-#define L1 405
-#define L2 70
-#define L3 195
-#define L4 142
-#define L5 140
-#define L6 80
-#define L7 130
-#define L8 10
-#define Lmax 410
-
 // KIN: Compute the forward kinematics of the robot
 // Input: Joint variables 
 // Output: Wrist Frame 

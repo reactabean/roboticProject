@@ -7,7 +7,8 @@
 //may not need some of this
 #include <stdio.h> //this is for printf 
 #include <iostream> // this is for cout
-#include <math.h> // this is for arc2tan 
+#include <math.h> // this is for arc2tan
+#include "../Constants.h"
 using namespace std;
 
 // Define PI as accurately as possible

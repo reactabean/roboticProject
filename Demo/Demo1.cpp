@@ -20,18 +20,7 @@ using namespace std;
 #define HOMETHEATA2	    0
 #define HOMEDISTANCE3   -100
 #define HOMETHEATA4	    0
- //link Paramater limits
-#define HIGHTHEATA1	    150
-#define LOWTHEATA1     -150
 
-#define HIGHTHEATA2	    100
-#define LOWTHEATA12	   -100
-
-#define HIGHDISTANCE3  -100 
-#define LOWDISTANCE3   -200 
-
-#define HIGHTHEATA4	    160
-#define LOWTHEATA4 	   -160
 
 //
 ///////////////////
