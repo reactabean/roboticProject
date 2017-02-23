@@ -29,13 +29,17 @@ using namespace std;
 frameParam_t inputCartCoordinates();
 void inputJointCoordinates(JOINT &temp);
 bool checkJointCoordinates(JOINT &temp);
+double jointDistance(JOINT &temp);
+void printJoint(JOINT &temp);
 
 int main(int argc, char* argv[])
 {	
 	frameParam_t wristFrame;
 	JOINT jointParam;
+	jointReturn jointSolution;
 	bool works;
 	char selection;
+	double distance1, distance2;
 
 	while(1){
 	cout << "============================================="<<endl ;
@@ -92,7 +96,42 @@ int main(int argc, char* argv[])
 		break;
 
 		case 'i'  :
-		//TODO: Fill
+		jointSolution = INVKIN(inputCartCoordinates());
+
+		if (jointSolution.configValid == 0) {
+			cout << "Selected position is outside of workspace, CANCELLED ACTION" << endl;
+		}
+		else {
+			cout << "Solution 1 is: " << endl;
+			printJoint(jointSolution.config1);
+			cout << "Solution 2 is: " << endl;
+			printJoint(jointSolution.config2);
+
+			if (checkJointCoordinates(jointSolution.config1)) {
+				distance1 = jointDistance(jointSolution.config1);
+			}
+			else {
+				distance1 = 99999999;
+			}
+			if (checkJointCoordinates(jointSolution.config2)) {
+				distance2 = jointDistance(jointSolution.config2);
+			}
+			else {
+				distance2 = 99999999;
+			}
+
+			cout << "Moving to Solution " << (distance1 > distance2) + 1 << endl;
+			for (int i = 0; i < 4; i++) {
+				jointParam[i] = (distance1 > distance2) ? jointSolution.config2[i] : jointSolution.config1[i];
+			}
+			if (!checkJointCoordinates(jointParam)) {
+				cout << "Both solutions outside the joint limits, CANCELLED ACTION" << endl;
+			} else if (!MoveToConfiguration(jointParam)) {
+				cout << "Command to move failed, CANCELLED ACTION" << endl;
+			}
+
+		}
+
 		break;
 
 		case 'x'  :
@@ -146,7 +185,7 @@ bool checkJointCoordinates(JOINT &temp){
 	clear = 0;
 	if ((temp[0] <=HIGHTHEATA1 ) && ( temp[0] >=LOWTHEATA1) 
 		&& (temp[1] <=HIGHTHEATA2 ) && ( temp[1] >= LOWTHEATA12) 
-		&& (temp[2] <= HIGHDISTANCE3) && ( temp[2] >=LOWDISTANCE3) 
+		&& (temp[2] <= HIGHDISTANCE3) && ( temp[2] >= LOWDISTANCE3) 
 		&& (temp[3] <= HIGHTHEATA4) && ( temp[3] >=LOWTHEATA4 ))
 	{
 		clear =1 ;
@@ -154,11 +193,23 @@ bool checkJointCoordinates(JOINT &temp){
 	return clear;
 }
 
+double jointDistance(JOINT &temp) {
+	JOINT current;
+	double distance;
+	GetConfiguration(current);
+	distance = abs(temp[0] - current[0]) + abs(temp[1] - current[1]) + abs(temp[3] - current[3]);
+	return distance;
+}
+
+void printJoint(JOINT &temp) {
+	cout << "theta 1 = " << temp[0] << "   theta 2 = " << temp[1] << "   distance 3 = " << temp[2] << "   theta 3 = " << temp[3] << endl;
+}
+
 
 //mark rubric----------------------------------------------
 //Functioning code for basic forward kinematics  : MET
 //30
-//Functioning code for  basic  inverse kinematics: NOT MET
+//Functioning code for  basic  inverse kinematics: MET (DEBUGGING NEEDED)
 //35
 //Functioning joint limits check in Forw/Inv Kin (before issuing move command) : NOT MET
 //5

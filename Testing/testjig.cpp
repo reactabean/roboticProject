@@ -10,6 +10,8 @@ bool testTINVERTandMULTIPLY(HomoMat toTest);
 bool isCloseToEqual(double a, double b);
 bool testKIN(JOINT &conf);
 bool testWHERE(JOINT &conf);
+bool testINVKIN(double x, double y, double z, double theta);
+bool testJointEquality(JOINT joint1, JOINT joint2);
 
 int main()
 {
@@ -26,12 +28,12 @@ testTINVERTandMULTIPLY(HomoMat(1, 2, 3, 44));
 testTINVERTandMULTIPLY(HomoMat(1.213, 2.2, -3, 180));
 
 
-JOINT q1 = { 0, 0, -100, 0 };
-JOINT q2 = {90, -45, -200, 45 };
-JOINT q3 = { RAD2DEG(.91), RAD2DEG(.793), -200, 45 };
-testKIN(q1);
+//JOINT q1 = { 0, 0, -100, 0 };
+JOINT q2 = {200, 200, -100, 45 };
+//JOINT q3 = { RAD2DEG(.91), RAD2DEG(.793), -200, -160 };
+//testKIN(q1);
 testWHERE(q2);
-testWHERE(q3);
+//testWHERE(q3);
 
 frameParam_t a;
 a.x = 100;
@@ -39,11 +41,13 @@ a.y = 295;
 a.z = 130;
 a.theta = DEG2RAD(0);
 jointReturn J = INVKIN(a);
+testINVKIN(337, 0, -100, 0);
+testINVKIN(200, 200, -100, 0);
 
-a.x = -142;
-a.y = 195;
-a.z = 130;
-a.theta = 2.35;
+a.x = -74;
+a.y = 24;
+a.z = 30;
+a.theta = 1.13;
 J = INVKIN(a);
 getchar();
 
@@ -140,4 +144,37 @@ bool testWHERE(JOINT &conf) {
 	cout << "The position of Wrist Frame for configuration " << conf[0] << ", " << conf[1] << ", " << conf[2] << ", " << conf[3] << ", "
 		<< "relative to Station is x = " << Tool_Frame.x << " y = " << Tool_Frame.y << " z= " << Tool_Frame.z << " theta =" << Tool_Frame.theta << endl;
 	return 0;
+}
+
+bool testINVKIN(double x, double y, double z, double theta) {
+	frameParam_t temp;
+	temp.x = x;
+	temp.y = y;
+	temp.z = z;
+	temp.theta = theta;
+
+	jointReturn tempReturn = INVKIN(temp);
+	if (tempReturn.configValid) {
+		temp = WHERE(tempReturn.config1);
+		if (!isCloseToEqual(temp.x, x) || !isCloseToEqual(temp.y, y) || !isCloseToEqual(temp.x, x)) {
+			cout << "config 1 not valid " << endl;
+			return 0;
+		}
+
+		temp = WHERE(tempReturn.config2);
+		if (!isCloseToEqual(temp.x, x) || !isCloseToEqual(temp.y, y) || !isCloseToEqual(temp.x, x)) {
+			cout << "config 2 not valid " << endl;
+			return 0;
+		}
+		
+	}
+	else {
+		return 0;
+	}
+
+	return 1;
+}
+
+bool testJointEquality(JOINT joint1, JOINT joint2) {
+	return (isCloseToEqual(joint1[0], joint2[0]) && isCloseToEqual(joint1[1], joint2[1]) && isCloseToEqual(joint1[3], joint2[3]));
 }
