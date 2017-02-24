@@ -34,7 +34,7 @@ void printJoint(JOINT &temp);
 
 int main(int argc, char* argv[])
 {	
-	frameParam_t wristFrame;
+	frameParam_t toolFrame;
 	JOINT jointParam;
 	jointReturn jointSolution;
 	bool works;
@@ -49,6 +49,8 @@ int main(int argc, char* argv[])
 	cout << "'e' to enter joint position"<<endl ;
 	cout << "'f' for forward kinematics on current position"<<endl;
 	cout << "'i' to enter position perform inverse kinematics and move to position"<<endl;
+	cout << "'c' to close the end effector" << endl;
+	cout << "'o' to open the end effector" << endl;
 	cout << "'x' to exit program"<<endl;
 	cout << "============================================="<<endl ;
 	cin>>selection;
@@ -83,16 +85,16 @@ int main(int argc, char* argv[])
 		case 'f'  :
 		cout<<"------Kinematic analysis being done on current position------"<<endl;
 		GetConfiguration(jointParam);
-		wristFrame = KIN(jointParam);
+		toolFrame = WHERE(jointParam);
 		cout << "The Joint positions: [" << jointParam[0] << ", " << jointParam[1] << ", " << jointParam[2] << ", " << jointParam[3] << "] " << endl;
 		
 		//eliminate small values from display
-		if ( (wristFrame.x  > -0.01) && (wristFrame.x < 0.01)) {wristFrame.x =0;}
-		if ( (wristFrame.y  > -0.01) && (wristFrame.y < 0.01)) {wristFrame.y =0;}
-		if ( (wristFrame.z  > -0.01) && (wristFrame.z < 0.01)) {wristFrame.z =0;}
-		if ( (wristFrame.theta  > -0.001) && (wristFrame.theta < 0.001)) {wristFrame.theta = 0;}
+		if ( (toolFrame.x  > -0.01) && (toolFrame.x < 0.01)) {toolFrame.x =0;}
+		if ( (toolFrame.y  > -0.01) && (toolFrame.y < 0.01)) {toolFrame.y =0;}
+		if ( (toolFrame.z  > -0.01) && (toolFrame.z < 0.01)) {toolFrame.z =0;}
+		if ( (toolFrame.theta  > -0.001) && (toolFrame.theta < 0.001)) {toolFrame.theta = 0;}
 
-		cout << "Relative to Station is: x = " << wristFrame.x << " y = " << wristFrame.y << " z= " << wristFrame.z << " theta =" << RAD2DEG(wristFrame.theta) << endl;
+		cout << "Relative to Station is: x = " << toolFrame.x << " y = " << toolFrame.y << " z= " << toolFrame.z << " theta =" << RAD2DEG(toolFrame.theta) << endl;
 		break;
 
 		case 'i'  :
@@ -133,6 +135,22 @@ int main(int argc, char* argv[])
 		}
 
 		break;
+
+		case 'c':
+			works = Grasp(true);
+
+			if (works == 0) {
+				cout << "closing grasp failed" << endl;
+			}
+			break;
+
+		case 'o':
+			works = Grasp(false);
+
+			if (works == 0) {
+				cout << "opening grasp failed" << endl;
+			}
+			break;
 
 		case 'x'  :
 		return 0;
@@ -209,13 +227,13 @@ void printJoint(JOINT &temp) {
 //mark rubric----------------------------------------------
 //Functioning code for basic forward kinematics  : MET
 //30
-//Functioning code for  basic  inverse kinematics: MET (DEBUGGING NEEDED)
+//Functioning code for  basic  inverse kinematics: MET
 //35
-//Functioning joint limits check in Forw/Inv Kin (before issuing move command) : NOT MET
+//Functioning joint limits check in Forw/Inv Kin (before issuing move command) : MET
 //5
-//Functioning multiple solutions and choosing the nearest one to move to : NOT MET
+//Functioning multiple solutions and choosing the nearest one to move to : MET
 //15
-//Functioning outside workspace (no solution exists) : NOT MET
+//Functioning outside workspace (no solution exists) : MET
 //5
 //Theory: forward kinematics equations : NOT MET
 //5
