@@ -12,6 +12,7 @@
 #include "../Comp1/Comp1.h"
 #include "../Comp2/Comp2.h"
 #include "../Comp3/Comp3.h"
+#include "../Traj/Traj.h"
 using namespace std;
 
 //DEFINE PARAMATERS
@@ -40,7 +41,7 @@ int main(int argc, char* argv[])
 	bool works;
 	char selection;
 	double distance1, distance2;
-	int time;  
+	int diftime;  
 
 
 	while(1){
@@ -191,11 +192,11 @@ int main(int argc, char* argv[])
 			}
 
 			//time required frame
-			time = inputtime();
+			diftime = inputtime();
 
-			//planning stage
+			//travel stage
+			works = movetraj(jointParam,joint1,joint2,joint3,finaljoint,diftime);
 
-			//moving stage
 
 		
 		break;
@@ -244,9 +245,9 @@ void inputJointCoordinates(JOINT &temp){
 	  	cout<<"entered digit:"<<temp[3]<<endl; //test funtion remove on final build
 }
 
-int inputtime(){
-	int time;
-	cout << "please enter time requirements"<<endl;
+double inputtime(){
+	double time;
+	cout << "please enter time requirements (seconds)"<<endl;
 	cin>>time;
 	return time;
 	//todo: implement some input checking 	
