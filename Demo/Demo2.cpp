@@ -30,7 +30,7 @@ void inputJointCoordinates(JOINT &temp);
 bool checkJointCoordinates(JOINT &temp);
 double jointDistance(JOINT &temp);
 void printJoint(JOINT &temp);
-int inputtime();
+double inputtime();
 bool cartToJoint(JOINT &temp);
 
 int main(int argc, char* argv[])
@@ -196,14 +196,12 @@ int main(int argc, char* argv[])
 
 			//travel stage
 			works = movetraj(jointParam,joint1,joint2,joint3,finaljoint,diftime);
-
-
-		
 		break;
 
 		case 'x'  :
 		return 0;
 		break;
+
 
    default : 
       cout << "__________you did not enter a valid character_________"<<endl;;
