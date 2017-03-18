@@ -12,6 +12,8 @@
 
 #include <time.h>
 #include <iostream> // this is for cout
+#include <windows.h> //this is for sleep
+#include "../Constants.h" // this is for the joint limits
 
 
 struct cubicCoef{
@@ -25,10 +27,10 @@ struct cubicJoints {
 bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &final, double diftime);
 
 //need to write
-calcCubicPos(JOINT &start,cubicJoints &block);
-calcCubicVel(JOINT &start, &block);
-calcCubicAcc(JOINT &start, &block);
-checkCubicvalues(JOINT &position,JOINT &velocity,JOINT &acceleration);
+void calcCubicPos(JOINT &pos,cubicJoints &block, double time);
+void calcCubicVel(JOINT &vel,cubicJoints&block, double time);
+void calcCubicAcc(JOINT &acc,cubicJoints &block, double time);
+void checkCubicvalues(JOINT &position,JOINT &velocity,JOINT &acceleration);
 
 
 #endif //!TRAJ
