@@ -16,7 +16,7 @@
 #define LOWTHEATAVEL1      -150
 
 #define HIGHTHEATAVEL2	    150
-#define LOWTHEATA1VEL2	   -150
+#define LOWTHEATAVEL2	   -150
 
 #define HIGHDISTANCEVEL3    50 
 #define LOWDISTANCEVEL3    -50 
@@ -29,13 +29,13 @@
 #define LOWTHEATAACC1      -600
 
 #define HIGHTHEATAACC2	    600
-#define LOWTHEATA1ACC2	   -600
+#define LOWTHEATAACC2	   -600
 
 #define HIGHDISTANCEACC3    200 
 #define LOWDISTANCEACC3    -200 
 
-#define HIGHTHEATAVELACC4   600
-#define LOWTHEATAVELACC4   -600
+#define HIGHTHEATAACC4   600
+#define LOWTHEATAACC4   -600
 
 //for reference--- delete on final copy
 //joint Limits
