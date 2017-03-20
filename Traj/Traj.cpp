@@ -242,10 +242,10 @@ bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &fina
 	after = clock();
 
 	//block1: 
+	myfile << "block 1 \n";
 	while (timeslice > difftime (after,before)){
 	
 		//todo: dump current joint position to csv
-		myfile << "block 1 \n";
 		GetConfiguration(currentPosition); 
 		myfile << currentPosition[0] << "," << currentPosition[1] << ","  << currentPosition[2] << ","  << currentPosition[3] << "\n";
 
@@ -256,13 +256,14 @@ bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &fina
 		calcCubicPos(position,block1,time);
 		calcCubicVel(velocity,block1,time);
 		calcCubicAcc(acceleration,block1,time);
-		error = checkCubicvalues(position,velocity,acceleration);
+		error = !checkCubicValues(position,velocity,acceleration);
 		if (error) cout << "In block 1" << endl;
+
 		//send move
 		MoveWithConfVelAcc(position,velocity,acceleration);
 	
 		//wait sample time
-		Sleep(1);
+		Sleep(10);
 
 		//update clock
 		after = clock();		
@@ -273,11 +274,11 @@ bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &fina
 	after = clock();
 
 	//block2
+	myfile << "block 2 \n";
 	while (timeslice > difftime (after,before)){
 	//todo: fill in
 
 		//todo: dump current joint position to csv
-		myfile << "block 2 \n";
 		GetConfiguration(currentPosition);
 		myfile << currentPosition[0] << "," << currentPosition[1] << "," << currentPosition[2] << "," << currentPosition[3] << "\n";
 
@@ -288,14 +289,14 @@ bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &fina
 		calcCubicPos(position, block2, time);
 		calcCubicVel(velocity, block2, time);
 		calcCubicAcc(acceleration, block2, time);
-		error = checkCubicvalues(position, velocity, acceleration);
+		error = !checkCubicValues(position, velocity, acceleration);
 		if (error) cout << "In block 2" << endl;
 
 		//send move
 		MoveWithConfVelAcc(position, velocity, acceleration);
 
 		//wait sample time
-		Sleep(1);
+		Sleep(10);
 
 		//update clock
 		after = clock();
@@ -305,11 +306,11 @@ bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &fina
 	after = clock();
 
 	//block3
+	myfile << "block 3 \n";
 	while (timeslice > difftime (after,before)){
 	//todo: fill in
 
 		//todo: dump current joint position to csv
-		myfile << "block 3 \n";
 		GetConfiguration(currentPosition);
 		myfile << currentPosition[0] << "," << currentPosition[1] << "," << currentPosition[2] << "," << currentPosition[3] << "\n";
 
@@ -320,25 +321,27 @@ bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &fina
 		calcCubicPos(position, block3, time);
 		calcCubicVel(velocity, block3, time);
 		calcCubicAcc(acceleration, block3, time);
-		error = checkCubicvalues(position, velocity, acceleration);
+		error = !checkCubicValues(position, velocity, acceleration);
 		if (error) cout << "In block 3" << endl;
 
 		//send move
 		MoveWithConfVelAcc(position, velocity, acceleration);
 
 		//wait sample time
-		Sleep(1);
+		Sleep(10);
 
 		//update clock
 		after = clock();
 	}
 
+	before = clock();
+	after = clock();
 	//block4
+	myfile << "block 4 \n";
 	while (timeslice > difftime (after,before)){
 	//todo: fill in
 
 		//todo: dump current joint position to csv
-		myfile << "block 4 \n";
 		GetConfiguration(currentPosition);
 		myfile << currentPosition[0] << "," << currentPosition[1] << "," << currentPosition[2] << "," << currentPosition[3] << "\n";
 
@@ -349,19 +352,20 @@ bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &fina
 		calcCubicPos(position, block4, time);
 		calcCubicVel(velocity, block4, time);
 		calcCubicAcc(acceleration, block4, time);
-		error = checkCubicvalues(position, velocity, acceleration);
+		error = !checkCubicValues(position, velocity, acceleration);
 		if (error) cout << "In block 4" << endl;
 
 		//send move
+		cout << "In block 1 move to position: " << position[0] << "," << position[1] << "," << position[2] << "," << position[3] << "," << "with velocity: " << velocity[0] << "," << velocity[1] << "," << velocity[2] << "," << velocity[3] << "," << "and acceleration: " << acceleration[0] << "," << acceleration[1] << "," << acceleration[2] << "," << acceleration[3] << endl;
 		MoveWithConfVelAcc(position, velocity, acceleration);
 
 		//wait sample time
-		Sleep(1);
+		Sleep(10);
 
 		//update clock
 		after = clock();
 	}
-
+	StopRobot();
 	myfile.close();
 	return error;
 }
@@ -391,7 +395,7 @@ void calcCubicAcc(JOINT &acc, cubicJoints &block, double t){
 	acc[3] =  block.theta4.c+ block.theta4.d*t;
 }
 
-bool checkCubicvalues(JOINT &position,JOINT &velocity,JOINT &acceleration){
+bool checkCubicValues(JOINT &position,JOINT &velocity,JOINT &acceleration){
 	//check and make sure they do not violate joint limits
 	//Todo: write the function
 	bool clear;
@@ -402,7 +406,10 @@ bool checkCubicvalues(JOINT &position,JOINT &velocity,JOINT &acceleration){
 		&& (position[3] <= HIGHTHEATA4) && (position[3] >= LOWTHEATA4))
 	{
 		clear = 1;
-		cout << "Violating joint limits" << endl;
+	}
+	else {
+		clear = 0;
+		cout << "Violating joint limits at " << position[0] << "," << position[1] << "," << position[2] << "," << position[3] << endl;
 	}
 
 	if ((velocity[0] <= HIGHTHEATAVEL1) && (velocity[0] >= LOWTHEATAVEL1)
@@ -411,7 +418,11 @@ bool checkCubicvalues(JOINT &position,JOINT &velocity,JOINT &acceleration){
 		&& (velocity[3] <= HIGHTHEATAVEL4) && (velocity[3] >= LOWTHEATAVEL4))
 	{
 		clear = 1;
-		cout << "Violating velocity limits" << endl;
+	}
+	else {
+		clear = 0;
+		cout << "Violating velocity limits at " << velocity[0] << "," << velocity[1] << "," << velocity[2] << "," << velocity[3] << endl;
+	
 	}
 
 	if ((acceleration[0] <= HIGHTHEATAACC1) && (acceleration[0] >= LOWTHEATAACC1)
@@ -420,7 +431,10 @@ bool checkCubicvalues(JOINT &position,JOINT &velocity,JOINT &acceleration){
 		&& (acceleration[3] <= HIGHTHEATAACC4) && (acceleration[3] >= LOWTHEATAACC4))
 	{
 		clear = 1;
-		cout << "Violating acceleration limits" << endl;
+	}
+	else {
+		clear = 0;
+		cout << "Violating acceleration limits at " << acceleration[0] << "," << acceleration[1] << "," << acceleration[2] << "," << acceleration[3] << endl;
 	}
 	return clear;
 }

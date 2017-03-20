@@ -12,6 +12,7 @@
 
 #include <time.h>
 #include <iostream> // this is for cout
+#include <conio.h>
 #include <windows.h> //this is for sleep
 #include <fstream> // for exporting data
 #include "../Constants.h" // this is for the joint limits
@@ -31,7 +32,7 @@ bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &fina
 void calcCubicPos(JOINT &pos,cubicJoints &block, double time);
 void calcCubicVel(JOINT &vel,cubicJoints&block, double time);
 void calcCubicAcc(JOINT &acc,cubicJoints &block, double time);
-bool checkCubicvalues(JOINT &position,JOINT &velocity,JOINT &acceleration);
+bool checkCubicValues(JOINT &position,JOINT &velocity,JOINT &acceleration);
 
 
 #endif //!TRAJ

@@ -247,7 +247,7 @@ double inputtime(){
 	double time;
 	cout << "please enter time requirements (seconds)"<<endl;
 	cin>>time;
-	return time;
+	return time * 1000;
 	//todo: implement some input checking 	
 }
 
