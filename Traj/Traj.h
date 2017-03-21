@@ -17,6 +17,8 @@
 #include <fstream> // for exporting data
 #include "../Constants.h" // this is for the joint limits
 
+using namespace std;
+
 
 struct cubicCoef{
 	double a,b,c,d;
@@ -27,6 +29,9 @@ struct cubicJoints {
 };
 
 bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &final, double diftime);
+
+void printJointToFile(ofstream &outputFile, JOINT &toPrint);
+cubicCoef * calculateCubicSpline(cubicJoints &jointArray, int size);
 
 //need to write
 void calcCubicPos(JOINT &pos,cubicJoints &block, double time);

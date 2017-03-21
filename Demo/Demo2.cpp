@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
 	bool works;
 	char selection;
 	double distance1, distance2;
-	int diftime;  
+	double diftime;
 
 
 	while(1){
@@ -57,7 +57,8 @@ int main(int argc, char* argv[])
 	cout << "'j' to enter 4 positions and move through planned trajectory"<<endl;
 	cout << "'x' to exit program"<<endl;
 	cout << "============================================="<<endl ;
-	cin>>selection;
+
+	cin >> selection;
 	// test line: cout<< "echo:"<< selection<<"done" << endl;
 
 	switch(selection){
@@ -165,30 +166,26 @@ int main(int argc, char* argv[])
 
 			//first frame
 			cout << "----entering first frame----" << endl;
-			works = cartToJoint(joint1);
-			if(works == 0){
-			break;
+			if (!cartToJoint(joint1)){
+				break;
 			}
 
 			//second frame
 			cout << "----entering second frame----" << endl;
-			works = cartToJoint(joint2);
-			if(works == 0){
-			break;
+			if (!cartToJoint(joint2)) {
+				break;
 			}
 			
 			//third frame
 			cout << "----entering third frame----" << endl;
-			works = cartToJoint(joint3);
-			if(works == 0){
-			break;
+			if (!cartToJoint(joint3)) {
+				break;
 			}
 			
 			//final frame
 			cout << "----entering finaljoint frame----" << endl;
-			works = cartToJoint(finaljoint);
-			if(works == 0){
-			break;
+			if (!cartToJoint(finaljoint)) {
+				break;
 			}
 
 			//time required frame
@@ -213,6 +210,7 @@ int main(int argc, char* argv[])
 
 frameParam_t inputCartCoordinates(){
 	frameParam_t temp;
+
 	cout << "please enter x coordinate relative to base frame"<<endl;
 	cin>>temp.x;
 		cout<<"entered digit:"<<temp.x<<endl; //test funtion remove on final build
@@ -321,8 +319,6 @@ bool cartToJoint(JOINT &temp) {
 
 	return error;
 }
-
-
 
 
 

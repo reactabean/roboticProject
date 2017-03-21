@@ -20,114 +20,12 @@ bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &fina
     cubicCoef temp;
 	bool error;
 	cubicJoints block1,block2,block3,block4;
+	cubicJoints jointSet[4];
 	time_t before, after;
 
 	//evenly distributed time needed to traverse between via points
 	timeslice =  diftime / 4;	
 	
-	//STAGE 1 INTERPOLATION :calculate coefficents cubic inbetween via points, with passing speed as zero
-	//note a block correponds to the space betweent via points
-/*
-	//block1========================
-	temp.a = start[0];
-	temp.b = 0;
-	temp.c =3*(first[0]-start[0]);
-	temp.d =-2*(first[0]-start[0]);
-	block1.theta1 = temp;
-
-	temp.a = start[1];
-	temp.b = 0;
-	temp.c =3*(first[1]-start[1]);
-	temp.d =-2*(first[1]-start[1]);
-    block1.theta2 = temp;
-	
-	temp.a = start[2];
-	temp.b = 0;
-	temp.c =3*(first[2]-start[2]);
-	temp.d =-2*(first[2]-start[2]);
-	block1.d3 = temp;
-
-	temp.a = start[3];
-	temp.b = 0;
-	temp.c =3*(first[3]-start[3]);
-	temp.d =-2*(first[3]-start[3]);
-	block1.theta4 = temp;
-
-	//block2===========================
-	temp.a = first[0];
-	temp.b = 0;
-	temp.c =3*(second[0]-first[0]);
-	temp.d =-2*(second[0]-first[0]);
-	block2.theta1 = temp;
-
-	temp.a = first[1];
-	temp.b = 0;
-	temp.c =3*(second[1]-first[1]);
-	temp.d =-2*(second[1]-first[1]);
-    block2.theta2 = temp;
-	
-	temp.a = first[2];
-	temp.b = 0;
-	temp.c =3*(second[2]-first[2]);
-	temp.d =-2*(second[2]-first[2]);
-	block2.d3 = temp;
-
-	temp.a = first[3];
-	temp.b = 0;
-	temp.c =3*(second[3]-first[3]);
-	temp.d =-2*(second[3]-first[3]);
-	block2.theta4 = temp;
-
-	//block3 ===========================
-	temp.a = second[0];
-	temp.b = 0;
-	temp.c =3*(third[0]-second[0]);
-	temp.d =-2*(third[0]-second[0]);
-	block3.theta1 = temp;
-
-	temp.a = start[1];
-	temp.b = 0;
-	temp.c =3*(third[1]-second[1]);
-	temp.d =-2*(third[1]-second[1]);
-    block3.theta2 = temp;
-	
-	temp.a = start[2];
-	temp.b = 0;
-	temp.c =3*(third[2]-second[2]);
-	temp.d =-2*(third[2]-second[2]);
-	block3.d3 = temp;
-
-	temp.a = start[3];
-	temp.b = 0;
-	temp.c =3*(third[3]-second[3]);
-	temp.d =-2*(third[3]-second[3]);
-	block3.theta4 = temp;
-
-	//block4 ===========================
-	temp.a = third[0];
-	temp.b = 0;
-	temp.c =3*(final[0]-third[0]);
-	temp.d =-2*(final[0]-third[0]);
-	block4.theta1 = temp;
-
-	temp.a = start[1];
-	temp.b = 0;
-	temp.c =3*(final[1]-third[1]);
-	temp.d =-2*(final[1]-third[1]);
-    block4.theta2 = temp;
-	
-	temp.a = start[2];
-	temp.b = 0;
-	temp.c =3*(final[2]-third[2]);
-	temp.d =-2*(final[2]-third[2]);
-	block4.d3 = temp;
-
-	temp.a = start[3];
-	temp.b = 0;
-	temp.c =3*(final[3]-third[3]);
-	temp.d =-2*(final[3]-third[3]);
-	block4.theta4 = temp;
-*/
 	//STAGE 1 INTERPOLATION :calculate coefficents cubic inbetween via points, with passing speed not as zero
 	//note a block correponds to the space betweent via points
 
@@ -237,134 +135,52 @@ bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &fina
 	ofstream myfile;
 	myfile.open("currentPosition.csv");
 	myfile << "theta1, theta2, d3, theta4 \n";
+	printJointToFile(myfile, start);
+	printJointToFile(myfile, first);
+	printJointToFile(myfile, second);
+	printJointToFile(myfile, third);
+	printJointToFile(myfile, final);
+	jointSet[0] = block1;
+	jointSet[1] = block2;
+	jointSet[2] = block3;
+	jointSet[3] = block4;
+
 
 	before = clock();
 	after = clock();
 
-	//block1: 
-	myfile << "block 1 \n";
-	while (timeslice > difftime (after,before)){
-	
-		//todo: dump current joint position to csv
-		GetConfiguration(currentPosition); 
-		myfile << currentPosition[0] << "," << currentPosition[1] << ","  << currentPosition[2] << ","  << currentPosition[3] << "\n";
+	for (int section = 0; section < 4; section++) {
+		//myfile << "block " << section+1 << " \n";
+		myfile << 0 << "," << 0 << "," << 0 << "," << 0 << endl; //mark block separation with blank lines
+		while (timeslice > difftime(after, before)) {
 
-		//calculate t to use in the cubic position calcualtion - goes from 0 to one over the block
-		time = (difftime (after,before) / timeslice); //does diff time have enough resolution?
+			//todo: dump current joint position to csv
+			GetConfiguration(currentPosition);
+			printJointToFile(myfile, currentPosition);
 
-		//calulate move inputs and check they are not violating limits
-		calcCubicPos(position,block1,time);
-		calcCubicVel(velocity,block1,time);
-		calcCubicAcc(acceleration,block1,time);
-		error = !checkCubicValues(position,velocity,acceleration);
-		if (error) cout << "In block 1" << endl;
+			//calculate t to use in the cubic position calcualtion - goes from 0 to one over the block
+			time = (difftime(after, before) / timeslice); //does diff time have enough resolution?
 
-		//send move
-		MoveWithConfVelAcc(position,velocity,acceleration);
-	
-		//wait sample time
-		Sleep(10);
+														  //calulate move inputs and check they are not violating limits
+			calcCubicPos(position, jointSet[section], time);
+			calcCubicVel(velocity, jointSet[section], time);
+			calcCubicAcc(acceleration, jointSet[section], time);
+			error = !checkCubicValues(position, velocity, acceleration);
+			if (error) cout << "In block " << section+1 << endl;
 
-		//update clock
-		after = clock();		
-	}
-	
+			//send move
+			MoveWithConfVelAcc(position, velocity, acceleration);
 
-	before = clock();
-	after = clock();
+			//wait sample time
+			Sleep(10);
 
-	//block2
-	myfile << "block 2 \n";
-	while (timeslice > difftime (after,before)){
-	//todo: fill in
-
-		//todo: dump current joint position to csv
-		GetConfiguration(currentPosition);
-		myfile << currentPosition[0] << "," << currentPosition[1] << "," << currentPosition[2] << "," << currentPosition[3] << "\n";
-
-		//calculate t to use in the cubic position calcualtion - goes from 0 to one over the block
-		time = (difftime(after, before) / timeslice); //does diff time have enough resolution?
-
-		//calulate move inputs and check they are not violating limits
-		calcCubicPos(position, block2, time);
-		calcCubicVel(velocity, block2, time);
-		calcCubicAcc(acceleration, block2, time);
-		error = !checkCubicValues(position, velocity, acceleration);
-		if (error) cout << "In block 2" << endl;
-
-		//send move
-		MoveWithConfVelAcc(position, velocity, acceleration);
-
-		//wait sample time
-		Sleep(10);
-
-		//update clock
+			//update clock
+			after = clock();
+		}
+		before = clock();
 		after = clock();
 	}
 
-	before = clock();
-	after = clock();
-
-	//block3
-	myfile << "block 3 \n";
-	while (timeslice > difftime (after,before)){
-	//todo: fill in
-
-		//todo: dump current joint position to csv
-		GetConfiguration(currentPosition);
-		myfile << currentPosition[0] << "," << currentPosition[1] << "," << currentPosition[2] << "," << currentPosition[3] << "\n";
-
-		//calculate t to use in the cubic position calcualtion - goes from 0 to one over the block
-		time = (difftime(after, before) / timeslice); //does diff time have enough resolution?
-
-		//calulate move inputs and check they are not violating limits
-		calcCubicPos(position, block3, time);
-		calcCubicVel(velocity, block3, time);
-		calcCubicAcc(acceleration, block3, time);
-		error = !checkCubicValues(position, velocity, acceleration);
-		if (error) cout << "In block 3" << endl;
-
-		//send move
-		MoveWithConfVelAcc(position, velocity, acceleration);
-
-		//wait sample time
-		Sleep(10);
-
-		//update clock
-		after = clock();
-	}
-
-	before = clock();
-	after = clock();
-	//block4
-	myfile << "block 4 \n";
-	while (timeslice > difftime (after,before)){
-	//todo: fill in
-
-		//todo: dump current joint position to csv
-		GetConfiguration(currentPosition);
-		myfile << currentPosition[0] << "," << currentPosition[1] << "," << currentPosition[2] << "," << currentPosition[3] << "\n";
-
-		//calculate t to use in the cubic position calcualtion - goes from 0 to one over the block
-		time = (difftime(after, before) / timeslice); //does diff time have enough resolution?
-
-		//calulate move inputs and check they are not violating limits
-		calcCubicPos(position, block4, time);
-		calcCubicVel(velocity, block4, time);
-		calcCubicAcc(acceleration, block4, time);
-		error = !checkCubicValues(position, velocity, acceleration);
-		if (error) cout << "In block 4" << endl;
-
-		//send move
-		cout << "In block 1 move to position: " << position[0] << "," << position[1] << "," << position[2] << "," << position[3] << "," << "with velocity: " << velocity[0] << "," << velocity[1] << "," << velocity[2] << "," << velocity[3] << "," << "and acceleration: " << acceleration[0] << "," << acceleration[1] << "," << acceleration[2] << "," << acceleration[3] << endl;
-		MoveWithConfVelAcc(position, velocity, acceleration);
-
-		//wait sample time
-		Sleep(10);
-
-		//update clock
-		after = clock();
-	}
 	StopRobot();
 	myfile.close();
 	return error;
@@ -437,6 +253,19 @@ bool checkCubicValues(JOINT &position,JOINT &velocity,JOINT &acceleration){
 		cout << "Violating acceleration limits at " << acceleration[0] << "," << acceleration[1] << "," << acceleration[2] << "," << acceleration[3] << endl;
 	}
 	return clear;
+}
+
+void printJointToFile(ofstream &outputFile, JOINT &toPrint) {
+		outputFile << toPrint[0] << "," << toPrint[1] << "," << toPrint[2] << "," << toPrint[3] << endl;
+}
+
+cubicCoef * calculateCubicSpline(cubicJoints &jointArray, int size) {
+	cubicCoef temp;
+	cubicCoef * returnCoefs;
+	returnCoefs = new cubicCoef[size];
+
+	// FIX ME
+	return returnCoefs; // care for mem leak
 }
 
 //for reference--- delete on final copy
