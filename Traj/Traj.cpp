@@ -5,7 +5,8 @@
 #include "Traj.h"
 using namespace std;
 
-//this function is to traverse between a set of inputted joints using a cubic spline
+
+//this function is to traverse between a set of inputted  joints using a cubic spline
 bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &final, double diftime)
 {
 	//todo: dump ideal positions to csv
@@ -86,19 +87,19 @@ bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &fina
 	temp.d = ((final[0] - second[0]) / 2 + (third[0] - first[0]) / 2) - 2 * (third[0] - second[0]);
 	block3.theta1 = temp;
 
-	temp.a = start[1];
+	temp.a = second[1];
 	temp.b = (third[1] - first[1]) / 2;
 	temp.c = -((final[1] - second[1]) / 2 + (third[1] - first[1])) + 3 * (third[1] - second[1]);
 	temp.d = ((final[1] - second[1]) / 2 + (third[1] - first[1]) / 2) - 2 * (third[1] - second[1]);
 	block3.theta2 = temp;
 
-	temp.a = start[2];
+	temp.a = second[2];
 	temp.b = (third[2] - first[2]) / 2;
 	temp.c = -((final[2] - second[2]) / 2 + (third[2] - first[2])) + 3 * (third[2] - second[2]);
 	temp.d = ((final[2] - second[2]) / 2 + (third[2] - first[2]) / 2) - 2 * (third[2] - second[2]);
 	block3.d3 = temp;
 
-	temp.a = start[3];
+	temp.a = second[3];
 	temp.b = (third[3] - first[3]) / 2;
 	temp.c = -((final[3] - second[3]) / 2 + (third[3] - first[3])) + 3 * (third[3] - second[3]);
 	temp.d = ((final[3] - second[3]) / 2 + (third[3] - first[3]) / 2) - 2 * (third[3] - second[3]);
@@ -111,19 +112,19 @@ bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &fina
 	temp.d = (final[0] - second[0]) / 2 - 2 * (final[0] - third[0]);
 	block4.theta1 = temp;
 
-	temp.a = start[1];
+	temp.a = third[1];
 	temp.b = (final[1] - second[1]) / 2;
 	temp.c = -(final[1] - second[1]) + 3 * (final[1] - third[1]);
 	temp.d = (final[1] - second[1]) / 2 - 2 * (final[1] - third[1]);
 	block4.theta2 = temp;
 
-	temp.a = start[2];
+	temp.a = third[2];
 	temp.b = (final[2] - second[2]) / 2;
 	temp.c = -(final[2] - second[2]) + 3 * (final[2] - third[2]);
 	temp.d = (final[2] - second[2]) / 2 - 2 * (final[2] - third[2]);
 	block4.d3 = temp;
 
-	temp.a = start[3];
+	temp.a = third[3];
 	temp.b = (final[3] - second[3]) / 2;
 	temp.c = -(final[3] - second[3]) + 3 * (final[3] - third[3]);
 	temp.d = (final[3] - second[3]) / 2 - 2 * (final[3] - third[3]);
@@ -140,6 +141,11 @@ bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &fina
 	printJointToFile(myfile, second);
 	printJointToFile(myfile, third);
 	printJointToFile(myfile, final);
+	printSplineToFile(myfile, block1);
+	printSplineToFile(myfile, block2);
+	printSplineToFile(myfile, block3);
+	printSplineToFile(myfile, block4);
+
 	jointSet[0] = block1;
 	jointSet[1] = block2;
 	jointSet[2] = block3;
@@ -257,6 +263,20 @@ bool checkCubicValues(JOINT &position,JOINT &velocity,JOINT &acceleration){
 
 void printJointToFile(ofstream &outputFile, JOINT &toPrint) {
 		outputFile << toPrint[0] << "," << toPrint[1] << "," << toPrint[2] << "," << toPrint[3] << endl;
+}
+
+void printSplineToFile (ofstream &outputFile, cubicJoints myJoint) {
+
+	printCubicCoef(outputFile, myJoint.theta1);
+	printCubicCoef(outputFile, myJoint.theta2);
+	printCubicCoef(outputFile, myJoint.d3);
+	printCubicCoef(outputFile, myJoint.theta4);
+}
+
+void printCubicCoef(ofstream &outputFile, cubicCoef myCoef) {
+
+	outputFile << myCoef.a << "," << myCoef.b << "," << myCoef.c << "," << myCoef.d << endl;
+
 }
 
 cubicCoef * calculateCubicSpline(cubicJoints &jointArray, int size) {

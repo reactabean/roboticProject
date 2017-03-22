@@ -32,6 +32,8 @@ bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &fina
 
 void printJointToFile(ofstream &outputFile, JOINT &toPrint);
 cubicCoef * calculateCubicSpline(cubicJoints &jointArray, int size);
+void printCubicCoef(ofstream &outputFile, cubicCoef myCoef);
+void printSplineToFile(ofstream &outputFile, cubicJoints myJoint);
 
 //need to write
 void calcCubicPos(JOINT &pos,cubicJoints &block, double time);

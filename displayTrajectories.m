@@ -2,8 +2,12 @@ outputFile = csvread('../currentPosition.csv', 1, 0);
 
 initialPos = outputFile(1, :);
 intermediatePos = outputFile(2:5);
+theta1spline = outputFile(6:4:18, :);
+theta2spline = outputFile(7:4:19, :);
+distance3spline = outputFile(8:4:20, :);
+theta4spline = outputFile(9:4:21, :);
 
-findBreaks = find(~outputFile(:, 3));
+findBreaks = find(~outputFile(:, 3) .* ~outputFile(:, 1));
 theta1values = outputFile(findBreaks(1)+1:findBreaks(2)-1, 1);
 theta2values = outputFile(findBreaks(1)+1:findBreaks(2)-1, 2);
 distance3values = outputFile(findBreaks(1)+1:findBreaks(2)-1, 3);
@@ -21,6 +25,8 @@ theta2values = [theta2values; outputFile(findBreaks(4)+1:end, 2)];
 distance3values = [distance3values; outputFile(findBreaks(4)+1:end, 3)];
 theta4values = [theta4values; outputFile(findBreaks(4)+1:end, 4)];
 
+
+
 f1 = figure;
 p1 = subplot(2, 2, 1);
 plot(theta1values, 'LineWidth', 2);
@@ -29,13 +35,14 @@ vec = ones(size(theta1values, 1), 2);
 vec(:, 1) = 150;
 vec(:, 2) = -150;
 hold on;
+plot(calcSplineValues(theta1spline, size(theta1values, 1), 4), 'color', 'green');
 plot(vec, 'color', 'red');
 title('Values for \theta 1');
 
 if (theta1values(end) > 0)
-    legend('Joint Position', 'Joint Limits', 'Location', 'southeast');
+    legend('Joint Position', 'Ideal Path', 'Joint Limits', 'Location', 'southeast');
 else
-    legend('Joint Position', 'Joint Limits', 'Location', 'northeast');
+    legend('Joint Position', 'Ideal Path', 'Joint Limits', 'Location', 'northeast');
 end
 
 xlabel('Time (ms)');
@@ -45,6 +52,11 @@ plot(findBreaks(3)-findBreaks(1),theta1values(findBreaks(3)-findBreaks(1)),'r.',
 plot(findBreaks(4)-findBreaks(1),theta1values(findBreaks(4)-findBreaks(1)),'r.','MarkerSize',15, 'color', 'blue')
 plot(size(theta1values, 1)-findBreaks(1),theta1values(size(theta1values, 1)-findBreaks(1)),'r.','MarkerSize',15, 'color', 'blue')
 
+plot(0,theta1spline(1, 1),'r.','MarkerSize',15, 'color', 'green')
+plot(size(theta1values, 1)/4,theta1spline(2, 1),'r.','MarkerSize',15, 'color', 'green')
+plot(size(theta1values, 1)*2/4,theta1spline(3, 1),'r.','MarkerSize',15, 'color', 'green')
+plot(size(theta1values, 1)*3/4,theta1spline(4, 1),'r.','MarkerSize',15, 'color', 'green')
+plot(size(theta1values, 1),sum(theta1spline(4, :)),'r.','MarkerSize',15, 'color', 'green')
 
 p2 = subplot(2, 2, 2);
 plot(theta2values, 'LineWidth', 2);
@@ -53,13 +65,14 @@ vec = ones(size(theta2values, 1), 2);
 vec(:, 1) = 100;
 vec(:, 2) = -100;
 hold on;
+plot(calcSplineValues(theta2spline, size(theta1values, 1), 4), 'color', 'green');
 plot(vec, 'color', 'red');
 title('Values for \theta 2');
 
 if (theta2values(end) > 0)
-    legend('Joint Position', 'Joint Limits', 'Location', 'southeast');
+    legend('Joint Position', 'Ideal Path', 'Joint Limits', 'Location', 'southeast');
 else
-    legend('Joint Position', 'Joint Limits', 'Location', 'northeast');
+    legend('Joint Position', 'Ideal Path', 'Joint Limits', 'Location', 'northeast');
 end
 xlabel('Time (ms)');
 ylabel('Joint Position (\theta)');
@@ -68,6 +81,12 @@ plot(findBreaks(3)-findBreaks(1),theta2values(findBreaks(3)-findBreaks(1)),'r.',
 plot(findBreaks(4)-findBreaks(1),theta2values(findBreaks(4)-findBreaks(1)),'r.','MarkerSize',15, 'color', 'blue')
 plot(size(theta2values, 1)-findBreaks(1),theta2values(size(theta2values, 1)-findBreaks(1)),'r.','MarkerSize',15, 'color', 'blue')
 
+plot(0,theta2spline(1, 1),'r.','MarkerSize',15, 'color', 'green')
+plot(size(theta2values, 1)/4,theta2spline(2, 1),'r.','MarkerSize',15, 'color', 'green')
+plot(size(theta2values, 1)*2/4,theta2spline(3, 1),'r.','MarkerSize',15, 'color', 'green')
+plot(size(theta2values, 1)*3/4,theta2spline(4, 1),'r.','MarkerSize',15, 'color', 'green')
+plot(size(theta2values, 1),sum(theta2spline(4, :)),'r.','MarkerSize',15, 'color', 'green')
+
 p3 = subplot(2, 2, 3);
 plot(distance3values, 'LineWidth', 2);
 axis(p3, [0 size(distance3values, 1) -210 -90]);
@@ -75,13 +94,14 @@ vec = ones(size(distance3values, 1), 2);
 vec(:, 1) = -100;
 vec(:, 2) = -200;
 hold on;
+plot(calcSplineValues(distance3spline, size(theta1values, 1), 4), 'color', 'green');
 plot(vec, 'color', 'red');
 title('Values for distance 3');
 
 if (distance3values(end) > -150)
-    legend('Joint Position', 'Joint Limits', 'Location', 'southeast');
+    legend('Joint Position', 'Ideal Path', 'Joint Limits', 'Location', 'southeast');
 else
-    legend('Joint Position', 'Joint Limits', 'Location', 'northeast');
+    legend('Joint Position', 'Ideal Path', 'Joint Limits', 'Location', 'northeast');
 end
 xlabel('Time (ms)');
 ylabel('Joint Position (mm)');
@@ -90,6 +110,12 @@ plot(findBreaks(3)-findBreaks(1),distance3values(findBreaks(3)-findBreaks(1)),'r
 plot(findBreaks(4)-findBreaks(1),distance3values(findBreaks(4)-findBreaks(1)),'r.','MarkerSize',15, 'color', 'blue')
 plot(size(distance3values, 1)-findBreaks(1),distance3values(size(distance3values, 1)-findBreaks(1)),'r.','MarkerSize',15, 'color', 'blue')
 
+plot(0,distance3spline(1, 1),'r.','MarkerSize',15, 'color', 'green')
+plot(size(distance3values, 1)/4,distance3spline(2, 1),'r.','MarkerSize',15, 'color', 'green')
+plot(size(distance3values, 1)*2/4,distance3spline(3, 1),'r.','MarkerSize',15, 'color', 'green')
+plot(size(distance3values, 1)*3/4,distance3spline(4, 1),'r.','MarkerSize',15, 'color', 'green')
+plot(size(distance3values, 1),sum(distance3spline(4, :)),'r.','MarkerSize',15, 'color', 'green')
+
 p4 = subplot(2, 2, 4);
 plot(theta4values, 'LineWidth', 2);
 axis(p4, [0 size(theta4values, 1) -180 180]);
@@ -97,13 +123,14 @@ vec = ones(size(theta4values, 1), 2);
 vec(:, 1) = 160;
 vec(:, 2) = -160;
 hold on;
+plot(calcSplineValues(theta4spline, size(theta1values, 1), 4), 'color', 'green');
 plot(vec, 'color', 'red');
 title('Values for \theta 4');
 
 if (theta4values(end) > 0)
-    legend('Joint Position', 'Joint Limits', 'Location', 'southeast');
+    legend('Joint Position', 'Ideal Path', 'Joint Limits', 'Location', 'southeast');
 else
-    legend('Joint Position', 'Joint Limits', 'Location', 'northeast');
+    legend('Joint Position', 'Ideal Path', 'Joint Limits', 'Location', 'northeast');
 end
 xlabel('Time (ms)');
 ylabel('Joint Position (\theta)');
@@ -111,6 +138,13 @@ plot(findBreaks(2)-findBreaks(1),theta4values(findBreaks(2)-findBreaks(1)),'r.',
 plot(findBreaks(3)-findBreaks(1),theta4values(findBreaks(3)-findBreaks(1)),'r.','MarkerSize',15, 'color', 'blue')
 plot(findBreaks(4)-findBreaks(1),theta4values(findBreaks(4)-findBreaks(1)),'r.','MarkerSize',15, 'color', 'blue')
 plot(size(theta4values, 1)-findBreaks(1),theta4values(size(theta4values, 1)-findBreaks(1)),'r.','MarkerSize',15, 'color', 'blue')
+
+plot(0,theta4spline(1, 1),'r.','MarkerSize',15, 'color', 'green')
+plot(size(theta4values, 1)/4,theta4spline(2, 1),'r.','MarkerSize',15, 'color', 'green')
+plot(size(theta4values, 1)*2/4,theta4spline(3, 1),'r.','MarkerSize',15, 'color', 'green')
+plot(size(theta4values, 1)*3/4,theta4spline(4, 1),'r.','MarkerSize',15, 'color', 'green')
+plot(size(theta4values, 1),sum(theta4spline(4, :)),'r.','MarkerSize',15, 'color', 'green')
+
 
 set (f1, 'Units', 'normalized', 'Position', [0,0,1,1]);
 
