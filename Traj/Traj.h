@@ -29,7 +29,7 @@ struct cubicJoints {
 
 bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &final, double diftime);
 
-void printJointToFile(ofstream &outputFile, JOINT &toPrint);
+void printJointToFile(ofstream &outputFile, JOINT &toPrint, double time);
 cubicCoef * calculateCubicSpline(cubicJoints &jointArray, int size);
 void printCubicCoef(ofstream &outputFile, cubicCoef myCoef);
 void printSplineToFile(ofstream &outputFile, cubicJoints myJoint);

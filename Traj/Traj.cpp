@@ -146,12 +146,12 @@ bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &fina
 	///=======================================needs work below this=============================
 	ofstream myfile;
 	myfile.open("currentPosition.csv");
-	myfile << "theta1, theta2, d3, theta4 \n";
-	printJointToFile(myfile, start);
-	printJointToFile(myfile, first);
-	printJointToFile(myfile, second);
-	printJointToFile(myfile, third);
-	printJointToFile(myfile, final);
+	myfile << "theta1, theta2, d3, theta4, time(ms) \n";
+	printJointToFile(myfile, start, 0);
+	printJointToFile(myfile, first, 0);
+	printJointToFile(myfile, second, 0);
+	printJointToFile(myfile, third, 0);
+	printJointToFile(myfile, final, 0);
 	printSplineToFile(myfile, block1);
 	printSplineToFile(myfile, block2);
 	printSplineToFile(myfile, block3);
@@ -168,16 +168,16 @@ bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &fina
 
 	for (int section = 0; section < 4; section++) {
 		//myfile << "block " << section+1 << " \n";
-		myfile << 0 << "," << 0 << "," << 0 << "," << 0 << endl; //mark block separation with blank lines
+		myfile << 0 << "," << 0 << "," << 0 << "," << 0 << "," << 0 << endl; //mark block separation with blank lines
 		while (timeslice > difftime(after, before)) {
 
 			//todo: dump current joint position to csv
 			GetConfiguration(currentPosition);
-			printJointToFile(myfile, currentPosition);
 
 			//calculate t to use in the cubic position calcualtion - goes from 0 to one over the block
 			time = difftime(after, before)/timeslice; //does diff time have enough resolution?
 
+			printJointToFile(myfile, currentPosition, section*timeslice+difftime(after, before));
 														  //calulate move inputs and check they are not violating limits
 			calcCubicPos(position, jointSet[section], time);
 			calcCubicVel(velocity, jointSet[section], time, timeslice/1000);
@@ -272,8 +272,8 @@ bool checkCubicValues(JOINT &position,JOINT &velocity,JOINT &acceleration){
 	return clear;
 }
 
-void printJointToFile(ofstream &outputFile, JOINT &toPrint) {
-		outputFile << toPrint[0] << "," << toPrint[1] << "," << toPrint[2] << "," << toPrint[3] << endl;
+void printJointToFile(ofstream &outputFile, JOINT &toPrint, double time) {
+		outputFile << toPrint[0] << "," << toPrint[1] << "," << toPrint[2] << "," << toPrint[3] << "," << time << endl;
 }
 
 void printSplineToFile (ofstream &outputFile, cubicJoints myJoint) {
