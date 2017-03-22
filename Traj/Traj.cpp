@@ -17,6 +17,7 @@ bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &fina
 	
 	//local variables
 	JOINT position,velocity,acceleration, currentPosition;
+	JOINT finalvel, finalacc;
 	double timeslice,time;
     cubicCoef temp;
 	bool error;
@@ -26,6 +27,16 @@ bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &fina
 
 	//evenly distributed time needed to traverse between via points
 	timeslice =  diftime / 4;	
+
+	//At the end of trajectory, set the velocity and acceleration to 0
+	finalvel[0] = 0;
+	finalvel[1] = 0;
+	finalvel[2] = 0;
+	finalvel[3] = 0;
+	finalacc[0] = 0;
+	finalacc[1] = 0;
+	finalacc[2] = 0;
+	finalacc[3] = 0;
 	
 	//STAGE 1 INTERPOLATION :calculate coefficents cubic inbetween via points, with passing speed not as zero
 	//note a block correponds to the space betweent via points
@@ -165,12 +176,12 @@ bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &fina
 			printJointToFile(myfile, currentPosition);
 
 			//calculate t to use in the cubic position calcualtion - goes from 0 to one over the block
-			time = (difftime(after, before) / timeslice); //does diff time have enough resolution?
+			time = difftime(after, before)/timeslice; //does diff time have enough resolution?
 
 														  //calulate move inputs and check they are not violating limits
 			calcCubicPos(position, jointSet[section], time);
-			calcCubicVel(velocity, jointSet[section], time);
-			calcCubicAcc(acceleration, jointSet[section], time);
+			calcCubicVel(velocity, jointSet[section], time, timeslice/1000);
+			calcCubicAcc(acceleration, jointSet[section], time, timeslice/1000);
 			error = !checkCubicValues(position, velocity, acceleration);
 			if (error) cout << "In block " << section+1 << endl;
 
@@ -187,34 +198,34 @@ bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &fina
 		after = clock();
 	}
 
-	StopRobot();
+	MoveWithConfVelAcc(position, finalvel, finalacc);
 	myfile.close();
 	return error;
 }
 
 
 void calcCubicPos(JOINT &pos,cubicJoints &block, double t){
-	// = a + bt + ct^2 + bt^3
+	// = a + bt + ct^2 + dt^3
 	pos[0] = block.theta1.a+block.theta1.b*t + block.theta1.c*t*t + block.theta1.d*t*t*t;
 	pos[1] = block.theta2.a+block.theta2.b*t + block.theta2.c*t*t + block.theta2.d*t*t*t;
 	pos[2] = block.d3.a+block.d3.b*t + block.d3.c*t*t + block.d3.d*t*t*t;
 	pos[3] = block.theta4.a+block.theta4.b*t + block.theta4.c*t*t + block.theta4.d*t*t*t;
 }
 
-void calcCubicVel(JOINT &vel, cubicJoints &block, double t){
-	// = b + ct + bt^2
-	vel[0] = block.theta1.b + block.theta1.c*t + block.theta1.d*t*t;
-	vel[1] = block.theta2.b + block.theta2.c*t + block.theta2.d*t*t;
-	vel[2] = block.d3.b + block.d3.c*t + block.d3.d*t*t;
-	vel[3] = block.theta4.b + block.theta4.c*t + block.theta4.d*t*t;
+void calcCubicVel(JOINT &vel, cubicJoints &block, double t, double timeslice){
+	// = b + 2ct + 3dt^2
+	vel[0] = (block.theta1.b + 2*block.theta1.c*t + 3*block.theta1.d*t*t)/timeslice;
+	vel[1] = (block.theta2.b + 2*block.theta2.c*t + 3*block.theta2.d*t*t)/timeslice;
+	vel[2] = (block.d3.b + 2*block.d3.c*t + 3*block.d3.d*t*t)/timeslice;
+	vel[3] = (block.theta4.b + 2*block.theta4.c*t + 3*block.theta4.d*t*t)/timeslice;
 }
 
-void calcCubicAcc(JOINT &acc, cubicJoints &block, double t){
-	// = c + dt
-	acc[0] =  block.theta1.c + block.theta1.d*t;
-	acc[1] =  block.theta2.c + block.theta2.d*t;
-	acc[2] =  block.d3.c + block.d3.d*t*t*t;
-	acc[3] =  block.theta4.c+ block.theta4.d*t;
+void calcCubicAcc(JOINT &acc, cubicJoints &block, double t, double timeslice){
+	// = 2c + 6dt
+	acc[0] =  (2*block.theta1.c + 6*block.theta1.d*t)/(timeslice*timeslice);
+	acc[1] =  (2*block.theta2.c + 6*block.theta2.d*t)/(timeslice*timeslice);
+	acc[2] =  (2*block.d3.c + 6*block.d3.d*t)/(timeslice*timeslice);
+	acc[3] =  (2*block.theta4.c+ 6*block.theta4.d*t)/(timeslice*timeslice); 
 }
 
 bool checkCubicValues(JOINT &position,JOINT &velocity,JOINT &acceleration){

@@ -16,7 +16,6 @@
 #include <windows.h> //this is for sleep
 #include <fstream> // for exporting data
 #include "../Constants.h" // this is for the joint limits
-
 using namespace std;
 
 
@@ -37,8 +36,8 @@ void printSplineToFile(ofstream &outputFile, cubicJoints myJoint);
 
 //need to write
 void calcCubicPos(JOINT &pos,cubicJoints &block, double time);
-void calcCubicVel(JOINT &vel,cubicJoints&block, double time);
-void calcCubicAcc(JOINT &acc,cubicJoints &block, double time);
+void calcCubicVel(JOINT &vel,cubicJoints&block, double time, double timeslice);
+void calcCubicAcc(JOINT &acc,cubicJoints &block, double time, double timeslice);
 bool checkCubicValues(JOINT &position,JOINT &velocity,JOINT &acceleration);
 
 
