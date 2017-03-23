@@ -29,11 +29,13 @@ theta4values = [theta4values; outputFile(findBreaks(4)+1:end, 4)];
 timeValues = [timeValues; outputFile(findBreaks(4)+1:end, 5)];
 
 % hack
-theta1values = [theta1values; outputFile(end, 1)];
-theta2values = [theta2values; outputFile(end, 2)];
-distance3values = [distance3values; outputFile(end, 3)];
-theta4values = [theta4values; outputFile(end, 4)];
-timeValues = [timeValues; outputFile(end, 5)];
+while (mod(size(theta1values, 1), 4) > 0)
+    theta1values = [theta1values; outputFile(end, 1)];
+    theta2values = [theta2values; outputFile(end, 2)];
+    distance3values = [distance3values; outputFile(end, 3)];
+    theta4values = [theta4values; outputFile(end, 4)];
+    timeValues = [timeValues; outputFile(end, 5)];
+end
 
 f1 = figure;
 p1 = subplot(2, 2, 1);
