@@ -24,7 +24,7 @@ jointReturn INVKIN(frameParam_t &wrist) {
 		return temp;
 	}
 
-	d3 = L1 + L2 - wrist.z - (Lmax + L7 + L8/2);
+	d3 = L1 + L2 - wrist.z - (Lmax + L7 + L8);
 	int v = ((wrist.x * wrist.x) + (wrist.y * wrist.y) - (L3 * L3) - (L4 * L4)) / (2 * L3 * L4);
 	theta2a = acos(((wrist.x * wrist.x) + (wrist.y * wrist.y) - (L3 * L3) - (L4 * L4)) / (2 * L3 * L4));
 	theta2b = -1 * theta2a;
