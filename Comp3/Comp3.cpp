@@ -50,7 +50,7 @@ jointReturn INVKIN(frameParam_t &wrist) {
 
 jointReturn SOLVE(frameParam_t &tool) {
 	frameParam_t temp = tool;
-	temp.z = temp.z + L7 - L6 + L8/2;
+	temp.z = temp.z + L7 - L6 + L8;
 	jointReturn tempJ = INVKIN(temp);
 	
 	return tempJ;
