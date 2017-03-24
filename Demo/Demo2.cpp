@@ -31,7 +31,8 @@ bool checkJointCoordinates(JOINT &temp);
 double jointDistance(JOINT &temp);
 void printJoint(JOINT &temp);
 double inputtime();
-bool cartToJoint(JOINT &temp);
+bool cartToJoint(JOINT &temp, JOINT &tempStart);
+double jointDistanceToViaPoint(JOINT &temp, JOINT &tempStart);
 
 int main(int argc, char* argv[])
 {	
@@ -166,25 +167,25 @@ int main(int argc, char* argv[])
 
 			//first frame
 			cout << "----entering first frame----" << endl;
-			if (!cartToJoint(joint1)){
+			if (!cartToJoint(joint1, jointParam)){
 				break;
 			}
 
 			//second frame
 			cout << "----entering second frame----" << endl;
-			if (!cartToJoint(joint2)) {
+			if (!cartToJoint(joint2, joint1)) {
 				break;
 			}
 			
 			//third frame
 			cout << "----entering third frame----" << endl;
-			if (!cartToJoint(joint3)) {
+			if (!cartToJoint(joint3, joint2)) {
 				break;
 			}
 			
 			//final frame
 			cout << "----entering finaljoint frame----" << endl;
-			if (!cartToJoint(finaljoint)) {
+			if (!cartToJoint(finaljoint, joint3)) {
 				break;
 			}
 
@@ -272,11 +273,17 @@ double jointDistance(JOINT &temp) {
 	return distance;
 }
 
+double jointDistanceToViaPoint(JOINT &temp, JOINT &tempStart) {
+	double distance;
+	distance = abs(temp[0] - tempStart[0]) + abs(temp[1] - tempStart[1]) + abs(temp[3] - tempStart[3]);
+	return distance;
+}
+
 void printJoint(JOINT &temp) {
 	cout << "theta 1 = " << temp[0] << "   theta 2 = " << temp[1] << "   distance 3 = " << temp[2] << "   theta 3 = " << temp[3] << endl;
 }
 
-bool cartToJoint(JOINT &temp) {
+bool cartToJoint(JOINT &temp, JOINT &tempStart) {
 	//this funtion basically shortens down the inverse kin process for the purpose of trajectory planning
 	bool error;
 	jointReturn jointSolution;
@@ -294,13 +301,13 @@ bool cartToJoint(JOINT &temp) {
 	else {
 		
 		if (checkJointCoordinates(jointSolution.config1)) {
-			distance1 = jointDistance(jointSolution.config1);
+			distance1 = jointDistanceToViaPoint(jointSolution.config1, tempStart);
 		}
 		else {
 			distance1 = 99999999;
 		}
 		if (checkJointCoordinates(jointSolution.config2)) {
-			distance2 = jointDistance(jointSolution.config2);
+			distance2 = jointDistanceToViaPoint(jointSolution.config2, tempStart);
 		}
 		else {
 			distance2 = 99999999;
