@@ -8,9 +8,9 @@ rotationMatrices(:, :, 1) = R2;
 jointVelocities = [thetadot1, thetadot2; 0 0; 0 0];
 jointAccelerations = [thetadotdot1, thetadotdot2; 0 0; 0 0];
 jointMasses = [M1, M2; 0 0; 0 0];
-centersOfMass1 = [L1, L2; 0 0; 0 0]; % Fix me 
-centersOfMass2 = [L1, L2; 0 0; 0 0]; % Fix me
+centersOfMass = [L1, L2; 0 0; 0 0];
+nextOrigin = [0, L1; 0 0; 0 0];
 jointMoments = zeros(3, 2);
 
-[myf, myn] = calculateTorques( rotationMatrices, jointVelocities, jointAccelerations, jointMasses, centersOfMass1, centersOfMass2, jointMoments );
+[myf, myn] = calculateTorques( rotationMatrices, jointVelocities, jointAccelerations, jointMasses, nextOrigin, centersOfMass, jointMoments );
 
