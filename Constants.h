@@ -65,20 +65,23 @@
 #define L6 80
 #define L7 130
 #define L8 10
+#define L9 30
 #define Lmax 410
 
-//DEFINED CONTROLLER PARAMETERS
-#define CONTROLLERTIME   10 // 10 ms given to controller to achieve desired pos, velocity, and acceleration. 
-#define CONTROLLERSAMPTIME 2 //2 ms given between each controller 'tick'
+#define l1 405/1000
+#define l2 70/1000
+#define l3 195/1000
+#define l4 142/1000
+#define l5 140/1000
+#define l6 80/1000
+#define l7 130/1000
+#define l8 10/1000
+#define l9 30/1000
+#define lmax 410/1000
 
-//should be large as possible to reduce settling time
-#define KP1 1 //todo: set properly 
-#define KP2 1 //todo: set properly
-#define KP3 1 //todo: set properly 
-#define KP4 1 //todo: set properly 
+#define M1 1.7
+#define M2 1.0
+#define M3 1.7
+#define M4 1.0
 
-//should be 2*SQRT(KPi)
-#define KV1 1 //todo: set properly 
-#define KV2 1 //todo: set properly
-#define KV3 1 //todo: set properly 
-#define KV4 1 //todo: set properly 
+#define gravity 9.8

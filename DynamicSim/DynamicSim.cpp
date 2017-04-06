@@ -17,6 +17,7 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 	double deltaT = 10;
 	double v;  
 	double theta1, theta2, D3, theta4, thetadot1, thetadot2, Ddot3, thetadot4;
+	bool work;
 
 	// Friction coefficient
 	v = 0.5;
@@ -48,35 +49,35 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 
 		// To do: Assign the matrices for dynamic equation according to matlab result
 		// M,V,G,F
-		M.homoMatrix[0][0] = L9 * L9 * M4 + L4*M3*(L4 + L3*cos(theta2)) + L9*M4*(L9 + cos(theta4)*(L4 + L3*cos(theta2)) + L3*sin(theta2)*sin(theta4)) + L3 * L3 * M2*cos(2 * theta2);
-		M.homoMatrix[0][1] = L4 * L4 * M3 + L9 * L9 * M4 + L9*M4*(L9 + L4*cos(theta4));
+		M.homoMatrix[0][0] = l9 * l9 * M4 + l4*M3*(l4 + l3*cos(theta2)) + l9*M4*(l9 + cos(theta4)*(l4 + l3*cos(theta2)) + l3*sin(theta2)*sin(theta4)) + l3 * l3 * M2*cos(2 * theta2);
+		M.homoMatrix[0][1] = l4 * l4 * M3 + l9 * l9 * M4 + l9*M4*(l9 + l4*cos(theta4));
 		M.homoMatrix[0][2] = 0;
-		M.homoMatrix[0][3] = -2 * L9 * L9 * M4;
+		M.homoMatrix[0][3] = -2 * l9 * l9 * M4;
 
-		M.homoMatrix[1][0] = L9 * L9 * M4 + L4*M3*(L4 + L3*cos(theta2)) + L9*M4*(L9 + cos(theta4)*(L4 + L3*cos(theta2)) + L3*sin(theta2)*sin(theta4));
-		M.homoMatrix[1][1] = L4 * L4 * M3 + L9 * L9 * M4 + L9*M4*(L9 + L4*cos(theta4));
+		M.homoMatrix[1][0] = l9 * l9 * M4 + l4*M3*(l4 + l3*cos(theta2)) + l9*M4*(l9 + cos(theta4)*(l4 + l3*cos(theta2)) + l3*sin(theta2)*sin(theta4));
+		M.homoMatrix[1][1] = l4 * l4 * M3 + l9 * l9 * M4 + l9*M4*(l9 + l4*cos(theta4));
 		M.homoMatrix[1][2] = 0;
-		M.homoMatrix[1][3] = -2 * L9 * L9 * M4;
+		M.homoMatrix[1][3] = -2 * l9 * l9 * M4;
 
 		M.homoMatrix[2][0] = 0;
 		M.homoMatrix[2][1] = 0;
 		M.homoMatrix[2][2] = M3 + M4;
 		M.homoMatrix[2][3] = 0;
 
-		M.homoMatrix[3][0] = -L9 * L9 * M4 - L9*M4*(L9 + cos(theta4)*(L4 + L3*cos(theta2)) + L3*sin(theta2)*sin(theta4));
-		M.homoMatrix[3][1] = -L9 * L9 * M4 - L9*M4*(L9 + L4*cos(theta4));
+		M.homoMatrix[3][0] = -l9 * l9 * M4 - l9*M4*(l9 + cos(theta4)*(l4 + l3*cos(theta2)) + l3*sin(theta2)*sin(theta4));
+		M.homoMatrix[3][1] = -l9 * l9 * M4 - l9*M4*(l9 + l4*cos(theta4));
 		M.homoMatrix[3][2] = 0;
-		M.homoMatrix[3][3] = 2 * L9 * L9 * M4;
+		M.homoMatrix[3][3] = 2 * l9 * l9 * M4;
 
-		V[0] = (L3*L3)*M2*(thetadot1*thetadot1)*sin(theta2*2.0) + L3*L4*M3*(thetadot1*thetadot1)*sin(theta2) - L4*L9*M4*(thetadot1*thetadot1)*sin(theta4) - L4*L9*M4*(thetadot2*thetadot2)*sin(theta4) + L3*L9*M4*(thetadot1*thetadot1)*sin(theta2 - theta4) - L4*L9*M4*thetadot1*thetadot2*sin(theta4)*2.0;
-		V[1] = L3*L4*M3*(thetadot1*thetadot1)*sin(theta2) - L4*L9*M4*(thetadot1*thetadot1)*sin(theta4) - L4*L9*M4*(thetadot2*thetadot2)*sin(theta4) + L3*L9*M4*(thetadot1*thetadot1)*sin(theta2 - theta4) - L4*L9*M4*thetadot1*thetadot2*sin(theta4)*2.0;
+		V[0] = (l3*l3)*M2*(thetadot1*thetadot1)*sin(theta2*2.0) + l3*l4*M3*(thetadot1*thetadot1)*sin(theta2) - l4*l9*M4*(thetadot1*thetadot1)*sin(theta4) - l4*l9*M4*(thetadot2*thetadot2)*sin(theta4) + l3*l9*M4*(thetadot1*thetadot1)*sin(theta2 - theta4) - l4*l9*M4*thetadot1*thetadot2*sin(theta4)*2.0;
+		V[1] = l3*l4*M3*(thetadot1*thetadot1)*sin(theta2) - l4*l9*M4*(thetadot1*thetadot1)*sin(theta4) - l4*l9*M4*(thetadot2*thetadot2)*sin(theta4) + l3*l9*M4*(thetadot1*thetadot1)*sin(theta2 - theta4) - l4*l9*M4*thetadot1*thetadot2*sin(theta4)*2.0;
 		V[2] = 0;
-		V[3] = L9*M4*(L4*(thetadot1*thetadot1)*sin(theta4) + L4*(thetadot2*thetadot2)*sin(theta4) - L3*(thetadot1*thetadot1)*sin(theta2 - theta4) + L4*thetadot1*thetadot2*sin(theta4)*2.0);
+		V[3] = l9*M4*(l4*(thetadot1*thetadot1)*sin(theta4) + l4*(thetadot2*thetadot2)*sin(theta4) - l3*(thetadot1*thetadot1)*sin(theta2 - theta4) + l4*thetadot1*thetadot2*sin(theta4)*2.0);
 
-		G[0] = L4*M3*(gravity*cos(theta1)*cos(theta2) - gravity*sin(theta1)*sin(theta2)) + L9*M4*(cos(theta4)*(gravity*cos(theta1)*cos(theta2) - gravity*sin(theta1)*sin(theta2)) + sin(theta4)*(gravity*cos(theta1)*sin(theta2) + gravity*cos(theta2)*sin(theta1))) + L3*M2*gravity*cos(theta1 + 2 * theta2);
-		G[1] = L4*M3*(gravity*cos(theta1)*cos(theta2) - gravity*sin(theta1)*sin(theta2)) + L9*M4*(cos(theta4)*(gravity*cos(theta1)*cos(theta2) - gravity*sin(theta1)*sin(theta2)) + sin(theta4)*(gravity*cos(theta1)*sin(theta2) + gravity*cos(theta2)*sin(theta1)));
+		G[0] = l4*M3*(gravity*cos(theta1)*cos(theta2) - gravity*sin(theta1)*sin(theta2)) + l9*M4*(cos(theta4)*(gravity*cos(theta1)*cos(theta2) - gravity*sin(theta1)*sin(theta2)) + sin(theta4)*(gravity*cos(theta1)*sin(theta2) + gravity*cos(theta2)*sin(theta1))) + l3*M2*gravity*cos(theta1 + 2 * theta2);
+		G[1] = l4*M3*(gravity*cos(theta1)*cos(theta2) - gravity*sin(theta1)*sin(theta2)) + l9*M4*(cos(theta4)*(gravity*cos(theta1)*cos(theta2) - gravity*sin(theta1)*sin(theta2)) + sin(theta4)*(gravity*cos(theta1)*sin(theta2) + gravity*cos(theta2)*sin(theta1)));
 		G[2] = 0;
-		G[3] = -L9*M4*(cos(theta4)*(gravity*cos(theta1)*cos(theta2) - gravity*sin(theta1)*sin(theta2)) + sin(theta4)*(gravity*cos(theta1)*sin(theta2) + gravity*cos(theta2)*sin(theta1)));
+		G[3] = -l9*M4*(cos(theta4)*(gravity*cos(theta1)*cos(theta2) - gravity*sin(theta1)*sin(theta2)) + sin(theta4)*(gravity*cos(theta1)*sin(theta2) + gravity*cos(theta2)*sin(theta1)));
 
 
 		invM = M.TINVERT();
@@ -91,15 +92,19 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 			{
 				acceleration[i] = acceleration[i] + invM.homoMatrix[i][j] * temp[j];
 			}
-			velocity[i] = velocity[i] + acceleration[i] * deltaT;
-			position[i] = position[i] + velocity[i] * deltaT + 0.5 * acceleration[i] * deltaT * deltaT;
+			velocity[i] = velocity[i] + acceleration[i] * deltaT / 1000;
+			position[i] = position[i] + velocity[i] * deltaT / 1000 + 0.5 * acceleration[i] * (deltaT / 1000) * (deltaT / 1000);
 
 			// Send to output 
 			pos[i] = position[i];
 			vel[i] = velocity[i];
 			acc[i] = acceleration[i];
 		}
-		DisplayConfiguration(position);
+		// For debuging, delete on final delivery
+		cout << pos[0] << "," << pos[1] << "," << pos[2] << "," << pos[3] << endl; 
+
+		work = DisplayConfiguration(pos);
+		if (!work) cout << " Doesn't work for DisplayConfiguration " << endl;
 		Sleep(deltaT);
 		after = clock();
 	}
