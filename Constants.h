@@ -67,3 +67,10 @@
 #define L8 10
 #define L9 30
 #define Lmax 410
+
+#define M1 1.7
+#define M2 1.0
+#define M3 1.7
+#define M4 1.0
+
+#define gravity 9.8
