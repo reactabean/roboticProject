@@ -85,3 +85,19 @@
 #define M4 1.0
 
 #define gravity 9.8
+
+//DEFINED CONTROLLER PARAMETERS
+#define CONTROLLERTIME   10 // 10 ms given to controller to achieve desired pos, velocity, and acceleration. 
+#define CONTROLLERSAMPTIME 2 //2 ms given between each controller 'tick'
+
+//should be large as possible to reduce settling time
+#define KP1 1 //todo: set properly 
+#define KP2 1 //todo: set properly
+#define KP3 1 //todo: set properly 
+#define KP4 1 //todo: set properly 
+
+//should be 2*SQRT(KPi)
+#define KV1 1 //todo: set properly 
+#define KV2 1 //todo: set properly
+#define KV3 1 //todo: set properly 
+#define KV4 1 //todo: set properly 
