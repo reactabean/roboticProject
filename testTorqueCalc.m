@@ -11,7 +11,7 @@ jointAccelerations = [thetadotdot1, thetadotdot2];
 jointMasses = [M1, M2];
 centersOfMass = [L1, L2; 0 0; 0 0];
 nextOrigin = [0, L1; 0 0; 0 0];
-jointMoments = zeros(3, 2);
+jointMoments = zeros(3,3, 2);
 
 [myf, myn] = calculateTorques( rotationMatrices, jointVelocities, jointAccelerations, jointMasses, nextOrigin, centersOfMass, jointMoments, [0 0], [0 0] );
 

@@ -25,7 +25,7 @@ vDerivative(:, 1) = rotationMatrices(:, :, 1).'*yvector*gravity;
 prismaticComponent = cross(2*frequency(:, 1), prismaticVelocity(1)*zvector) + prismaticAcceleration(1)*zvector;
 Vc(:, 1) = cross(frequencyderivative(:, 1), centersOfMass(:, 1)) + cross(frequency(:, 1), cross(frequency(:, 1), centersOfMass(:, 1))) + vDerivative(:, 1) + prismaticComponent;
 F(:, 1) = jointMasses(1)*Vc(:, 1);
-N(:, 1) = jointMoments(1)*frequencyderivative(:, 1) + cross(frequency(:, 1), (jointMoments(1)*frequency(:, 1)));
+N(:, 1) = jointMoments(:, :, 1)*frequencyderivative(:, 1) + cross(frequency(:, 1), (jointMoments(:, :, 1)*frequency(:, 1)));
 
 for i = 1:jointNum-1
     frequency(:, i+1) = rotationMatrices(:, :, i+1)*frequency(:, i) + jointVelocities(i+1)*zvector;
@@ -34,7 +34,7 @@ for i = 1:jointNum-1
     vDerivative(:, i+1) = rotationMatrices(:, :, i+1).'*(cross(frequencyderivative(:, i), nextOrigin(:, i+1))+cross(frequency(:, i), cross(frequency(:, i), nextOrigin(:, i+1))) + vDerivative(:, i)) + prismaticComponent;
     Vc(:, i+1) = cross(frequencyderivative(:, i+1), centersOfMass(:, i+1)) + cross(frequency(:, i+1), cross(frequency(:, i+1), centersOfMass(:, i+1))) + vDerivative(:, i+1);
     F(:, i+1) = jointMasses(i+1)*Vc(:, i+1);
-    N(:, i+1) = jointMoments(i+1)*frequencyderivative(:, i+1) + cross(frequency(:, i+1), (jointMoments(i+1)*frequency(:, i+1)));
+    N(:, i+1) = jointMoments(:, :, i+1)*frequencyderivative(:, i+1) + cross(frequency(:, i+1), (jointMoments(:, :, i+1)*frequency(:, i+1)));
 end
 
 f(:, end) = F(:, end);
