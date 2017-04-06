@@ -1,5 +1,5 @@
 //DEMO 3 script for ENSC 488 Project
-//Andrew Nichol,Adrian fettes, Monica Li,March 2017
+//Andrew Nichol,Adrian fettes, Monica Li,April 2017
 
 #include <iostream> // for cout
 #include <conio.h>
@@ -355,16 +355,22 @@ bool cartToJoint(JOINT &temp, JOINT &tempStart) {
 
 
 //mark rubric----------------------------------------------
-//Functioning code for dynamic simulation: Not Met
-//25
-//Integrated functioning code for Inv Kin+Traj Plan + Controller + Dynamic Simulation: Not Met
-//20
-//Appropriate use of timers: Not Met
-//5
-//Functioning limit checks for joint torques: Not Met
-//5
-//Theory: Dynamic simulation and controller properly documented (as asked for in demo sheet): Not Met
-//5
-//Appropriate plots: Not Met
-//10
 
+//Functioning code for dynamic simulation: NOT MET
+//25
+//Integrated functioning code for Inv Kin+Traj Plan + Controller + Dynamic Simulation: NOT MET
+//50
+//appropriate use of timers
+//5
+//Joint limits check for via pts (before issuing move command) : NOT MET
+//5
+//Choosing the nearest invkin solution to move to for each via pt : NOT MET 
+//5
+//Functioning limit checks for max velocity and max acceleration : NOT MET
+//5
+//Functioning limit checks for joint torques : NOT MET
+//5
+//Appropriate plots : NOT MET
+//10
+//Theory: Dynamic simulation and controller properly documented (as asked for in demo sheet): NOT MET
+//5
