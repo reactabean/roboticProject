@@ -8,9 +8,13 @@ using namespace std;
 // Dynamic simulator for the manipulator, calculate the theta, theta_dot and theta_double_dot with given torque
 //Euler-integration routine 
 void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
-{
+{	
+	//todo
+	//should do a torque check!
+
+
 	// Local variables
-	JOINT initialPosition, position, velocity, acceleration;
+	JOINT initialPosition, position, velocity, acceleration, dispPosition;
 	HomoMat M, invM;
 	JOINT V, G, F, temp;
 	time_t before, after;
@@ -26,8 +30,13 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 
 	GetConfiguration(initialPosition);
 	for (int i = 0; i < 4; i++)
-	{
+	{	
+		if (i == 2) { 
 		position[i] = initialPosition[i];
+		}
+		else{
+		position[i] = DEG2RAD(initialPosition[i]);
+		}
 		velocity[i] = 0;
 	}
 
@@ -85,12 +94,21 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 		for (int i = 0; i < 4; i++)
 		{
 			F[i] = v * velocity[i];
-			//acceleration = invM * (tau - V - G - F);
+			//todo:
+			//acceleration = invM * (tau - V - G - F); ? 
+			//acceleration[i] = 0; may need to add
+			//or is it acceleration = invM * (tau - V - G - F)
 			temp[i] = tau[i] - V[i] - G[i] - F[i];
+		}
+
+
+		for (int i = 0; i < 4; i++)
+		{
 			acceleration[i] = 0;
 			for (int j = 0; j < 4; j++)
-			{
-				acceleration[i] = acceleration[i] + invM.homoMatrix[i][j] * temp[j];
+			{	
+				//maybe we should zero out values if its small enough
+				acceleration[i] = acceleration[i] +  invM.homoMatrix[i][j] * temp[j];
 			}
 			velocity[i] = velocity[i] + acceleration[i] * deltaT / 1000;
 			position[i] = position[i] + velocity[i] * deltaT / 1000 + 0.5 * acceleration[i] * (deltaT / 1000) * (deltaT / 1000);
@@ -103,7 +121,19 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 		// For debuging, delete on final delivery
 		cout << pos[0] << "," << pos[1] << "," << pos[2] << "," << pos[3] << endl; 
 
-		work = DisplayConfiguration(pos);
+		//To format the radian represntation of postion into angles for display
+		for (int i = 0; i < 4; i++)
+		{	
+			if (i == 2) { 
+				dispPosition[i] = position[i];
+			}
+			else{
+			dispPosition[i] = RAD2DEG(position[i]);
+			}
+		}
+
+		
+		work = DisplayConfiguration(dispPosition);
 		if (!work) cout << " Doesn't work for DisplayConfiguration " << endl;
 		Sleep(deltaT);
 		after = clock();
