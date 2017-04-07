@@ -110,6 +110,11 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 				//maybe we should zero out values if its small enough
 				acceleration[i] = acceleration[i] +  invM.homoMatrix[i][j] * temp[j];
 			}
+
+			if (abs(acceleration[i]) < 0.01){
+				acceleration[i] = 0;
+			}
+
 			velocity[i] = velocity[i] + acceleration[i] * deltaT / 1000;
 			position[i] = position[i] + velocity[i] * deltaT / 1000 + 0.5 * acceleration[i] * (deltaT / 1000) * (deltaT / 1000);
 
