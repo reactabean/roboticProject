@@ -8,6 +8,8 @@ using namespace std;
 //todo 
 // write f,v,g,F funciton, and also properly have initial values 
 // need to check rad/deg units
+// need error check 
+// need to pass out values
 
 bool moveCont(JOINT &dConf, JOINT &dVel, JOINT &dAcc,JOINT &tVel){
 	//tVel are passed in to act like initial values
@@ -21,6 +23,7 @@ bool moveCont(JOINT &dConf, JOINT &dVel, JOINT &dAcc,JOINT &tVel){
 	HomoMat M;
 	JOINT V, G, F;
 	
+
 	//initialize error state as false
 	error = false;
 
@@ -34,7 +37,14 @@ bool moveCont(JOINT &dConf, JOINT &dVel, JOINT &dAcc,JOINT &tVel){
 	//execute for 20 msecs
 	while (CONTROLLERTIME > difftime(after, before)){
 		
-		//todo write these functions
+		//convert to radians
+		convertDegToRad(tConf);
+		convertDegToRad(tVel);
+		convertDegToRad(dConf);
+		convertDegToRad(dVel);
+		convertDegToRad(dAcc);
+
+		//these funtions take in radian joint vectors
 		M = Mfun(tConf, tVel);
 		Vfun(V,tConf, tVel);
 		Gfun(G);
@@ -43,21 +53,29 @@ bool moveCont(JOINT &dConf, JOINT &dVel, JOINT &dAcc,JOINT &tVel){
 		for (int i = 0; i < 4; i++) {
 			//non partitioned stage
 			temp[i] = (kP[i]*(dConf[i] - tConf[i]) + kV[i]*(dVel[i] - tVel[i]) + dAcc[i]);
-			
+		}
+
+		for (int i = 0; i < 4; i++) {			
 			//matrix multiplicaiton
 			temp2[i] = 0;
 			for (int j = 0; j < 4; j++)
 			{
 				temp2[i] = temp2[i] + M.homoMatrix[i][j] * temp[j];
 			}
-
 			//partitioned stage
 			torque[i] = temp2[i] + V[i] +G[i] + F[i];   
 		}
-		
+
+		//convert back to degrees
+		convertRadToDeg(tConf);
+		convertRadToDeg(tVel);
+		convertRadToDeg(dConf);
+		convertRadToDeg(dVel);
+		convertRadToDeg(dAcc);
+
 		//todo: should have error check on torque values
 
-		//applies a new torque to the emulator 
+		//applies a new torque to the emulator -  this takes in degrees 
 		//this executes for 2 ms
 		update(torque, tConf, tVel, tAcc, CONTROLLERSAMPTIME);
 		
@@ -66,4 +84,27 @@ bool moveCont(JOINT &dConf, JOINT &dVel, JOINT &dAcc,JOINT &tVel){
 	}
 
 	return error;
+}
+
+
+void convertRadToDeg(JOINT &toDeg){
+	for (int i = 0; i < 4; i++){
+			if (i == 2) {
+
+			}
+			else {
+				toDeg[i] = RAD2DEG(toDeg[i]);
+			}
+	}
+}
+
+void convertDegToRad(JOINT &toJoint){
+	for (int i = 0; i < 4; i++){
+			if (i == 2) {
+
+			}
+			else {
+				toJoint[i] = DEG2RAD(toJoint[i]);
+			}
+	 }
 }
