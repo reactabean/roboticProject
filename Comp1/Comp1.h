@@ -42,6 +42,8 @@ public:
 	frameParam_t ITOU();
 	//inverts homogeneous matrix 
 	HomoMat TINVERT();
+	//inverts 4x4 matrix 
+	HomoMat TINVERT4();
 	//facilitates multiplication between homogeneous matrices
 	HomoMat operator * (HomoMat &rightmat);
 

@@ -128,3 +128,137 @@ void HomoMat::MUTATET(int row, int column, double value){
 
 
 
+HomoMat HomoMat::TINVERT4(){
+	HomoMat temp,tempout;
+	double det;
+    int i;
+
+    temp.homoMatrix [0][0] = homoMatrix [1][1]  * homoMatrix [2][2] * homoMatrix [3][3] - 
+             homoMatrix [1][1]  * homoMatrix [3][2] * homoMatrix [2][3] - 
+             homoMatrix [1][2]  * homoMatrix [2][1]  * homoMatrix [3][3] + 
+             homoMatrix [1][2]  * homoMatrix [3][1]  * homoMatrix [2][3] +
+             homoMatrix [1][3] * homoMatrix [2][1]  * homoMatrix [3][2] - 
+             homoMatrix [1][3] * homoMatrix [3][1]  * homoMatrix [2][2];
+
+     temp.homoMatrix [0][1] = -homoMatrix [0][1]  * homoMatrix [2][2] * homoMatrix [3][3] + 
+              homoMatrix [0][1]  * homoMatrix [3][2] * homoMatrix [2][3] + 
+              homoMatrix [0][2]  * homoMatrix [2][1]  * homoMatrix [3][3] - 
+              homoMatrix [0][2]  * homoMatrix [3][1]  * homoMatrix [2][3] - 
+              homoMatrix [0][3] * homoMatrix [2][1]  * homoMatrix [3][2] + 
+              homoMatrix [0][3] * homoMatrix [3][1]  * homoMatrix [2][2];
+
+     temp.homoMatrix [0][2] = homoMatrix [0][1]  * homoMatrix [1][2] * homoMatrix [3][3] - 
+             homoMatrix [0][1]  * homoMatrix [3][2] * homoMatrix [1][3] - 
+             homoMatrix [0][2]  * homoMatrix [1][1] * homoMatrix [3][3] + 
+             homoMatrix [0][2]  * homoMatrix [3][1] * homoMatrix [1][3] + 
+             homoMatrix [0][3] * homoMatrix [1][1] * homoMatrix [3][2] - 
+             homoMatrix [0][3] * homoMatrix [3][1] * homoMatrix [1][2];
+
+     temp.homoMatrix [0][3] = -homoMatrix [0][1]  * homoMatrix [1][2] * homoMatrix [2][3] + 
+               homoMatrix [0][1]  * homoMatrix [2][2] * homoMatrix [1][3] +
+               homoMatrix [0][2]  * homoMatrix [1][1] * homoMatrix [2][3] - 
+               homoMatrix [0][2]  * homoMatrix [2][1] * homoMatrix [1][3] - 
+               homoMatrix [0][3] * homoMatrix [1][1] * homoMatrix [2][2] + 
+               homoMatrix [0][3] * homoMatrix [2][1] * homoMatrix [1][2];
+
+     temp.homoMatrix [1][0] = -homoMatrix [1][0]  * homoMatrix [2][2] * homoMatrix [3][3] + 
+              homoMatrix [1][0]  * homoMatrix [3][2] * homoMatrix [2][3] + 
+              homoMatrix [1][2]  * homoMatrix [2][0] * homoMatrix [3][3] - 
+              homoMatrix [1][2]  * homoMatrix [3][0] * homoMatrix [2][3] - 
+              homoMatrix [1][3] * homoMatrix [2][0] * homoMatrix [3][2] + 
+              homoMatrix [1][3] * homoMatrix [3][0] * homoMatrix [2][2];
+
+     temp.homoMatrix [1][1] = homoMatrix [0][0]  * homoMatrix [2][2] * homoMatrix [3][3] - 
+             homoMatrix [0][0]  * homoMatrix [3][2] * homoMatrix [2][3] - 
+             homoMatrix [0][2]  * homoMatrix [2][0] * homoMatrix [3][3] + 
+             homoMatrix [0][2]  * homoMatrix [3][0] * homoMatrix [2][3] + 
+             homoMatrix [0][3] * homoMatrix [2][0] * homoMatrix [3][2] - 
+             homoMatrix [0][3] * homoMatrix [3][0] * homoMatrix [2][2];
+
+     temp.homoMatrix [1][2] = -homoMatrix [0][0]  * homoMatrix [1][2] * homoMatrix [3][3] + 
+              homoMatrix [0][0]  * homoMatrix [3][2] * homoMatrix [1][3] + 
+              homoMatrix [0][2]  * homoMatrix [1][0] * homoMatrix [3][3] - 
+              homoMatrix [0][2]  * homoMatrix [3][0] * homoMatrix [1][3] - 
+              homoMatrix [0][3] * homoMatrix [1][0] * homoMatrix [3][2] + 
+              homoMatrix [0][3] * homoMatrix [3][0] * homoMatrix [1][2];
+
+     temp.homoMatrix [1][3] = homoMatrix [0][0]  * homoMatrix [1][2] * homoMatrix [2][3] - 
+              homoMatrix [0][0]  * homoMatrix [2][2] * homoMatrix [1][3] - 
+              homoMatrix [0][2]  * homoMatrix [1][0] * homoMatrix [2][3] + 
+              homoMatrix [0][2]  * homoMatrix [2][0] * homoMatrix [1][3] + 
+              homoMatrix [0][3] * homoMatrix [1][0] * homoMatrix [2][2] - 
+              homoMatrix [0][3] * homoMatrix [2][0] * homoMatrix [1][2];
+
+     temp.homoMatrix [2][0] = homoMatrix [1][0]  * homoMatrix [2][1] * homoMatrix [3][3] - 
+             homoMatrix [1][0]  * homoMatrix [3][1] * homoMatrix [2][3] - 
+             homoMatrix [1][1]  * homoMatrix [2][0] * homoMatrix [3][3] + 
+             homoMatrix [1][1]  * homoMatrix [3][0] * homoMatrix [2][3] + 
+             homoMatrix [1][3] * homoMatrix [2][0] * homoMatrix [3][1] - 
+             homoMatrix [1][3] * homoMatrix [3][0] * homoMatrix [2][1];
+
+     temp.homoMatrix [2][1] = -homoMatrix [0][0]  * homoMatrix [2][1] * homoMatrix [3][3] + 
+              homoMatrix [0][0]  * homoMatrix [3][1] * homoMatrix [2][3] + 
+              homoMatrix [0][1]  * homoMatrix [2][0] * homoMatrix [3][3] - 
+              homoMatrix [0][1]  * homoMatrix [3][0] * homoMatrix [2][3] - 
+              homoMatrix [0][3] * homoMatrix [2][0] * homoMatrix [3][1] + 
+              homoMatrix [0][3] * homoMatrix [3][0] * homoMatrix [2][1];
+
+     temp.homoMatrix [2][2] = homoMatrix [0][0]  * homoMatrix [1][1] * homoMatrix [3][3] - 
+              homoMatrix [0][0]  * homoMatrix [3][1] * homoMatrix [1][3] - 
+              homoMatrix [0][1]  * homoMatrix [1][0] * homoMatrix [3][3] + 
+              homoMatrix [0][1]  * homoMatrix [3][0] * homoMatrix [1][3] + 
+              homoMatrix [0][3] * homoMatrix [1][0] * homoMatrix [3][1] - 
+              homoMatrix [0][3] * homoMatrix [3][0] * homoMatrix [1][1];
+
+     temp.homoMatrix [2][3] = -homoMatrix [0][0]  * homoMatrix [1][1] * homoMatrix [2][3] + 
+               homoMatrix [0][0]  * homoMatrix [2][1] * homoMatrix [1][3] + 
+               homoMatrix [0][1]  * homoMatrix [1][0] * homoMatrix [2][3] - 
+               homoMatrix [0][1]  * homoMatrix [2][0] * homoMatrix [1][3] - 
+               homoMatrix [0][3] * homoMatrix [1][0] * homoMatrix [2][1] + 
+               homoMatrix [0][3] * homoMatrix [2][0] * homoMatrix [1][1];
+
+     temp.homoMatrix [3][0] = -homoMatrix [1][0] * homoMatrix [2][1] * homoMatrix [3][2] + 
+              homoMatrix [1][0] * homoMatrix [3][1] * homoMatrix [2][2] + 
+              homoMatrix [1][1] * homoMatrix [2][0] * homoMatrix [3][2] - 
+              homoMatrix [1][1] * homoMatrix [3][0] * homoMatrix [2][2] - 
+              homoMatrix [1][2] * homoMatrix [2][0] * homoMatrix [3][1] + 
+              homoMatrix [1][2] * homoMatrix [3][0] * homoMatrix [2][1];
+
+     temp.homoMatrix [3][1] = homoMatrix [0][0] * homoMatrix [2][1] * homoMatrix [3][2] - 
+             homoMatrix [0][0] * homoMatrix [3][1] * homoMatrix [2][2] - 
+             homoMatrix [0][1] * homoMatrix [2][0] * homoMatrix [3][2] + 
+             homoMatrix [0][1] * homoMatrix [3][0] * homoMatrix [2][2] + 
+             homoMatrix [0][2] * homoMatrix [2][0] * homoMatrix [3][1] - 
+             homoMatrix [0][2] * homoMatrix [3][0] * homoMatrix [2][1];
+
+     temp.homoMatrix [3][2] = -homoMatrix [0][0] * homoMatrix [1][1] * homoMatrix [3][2] + 
+               homoMatrix [0][0] * homoMatrix [3][1] * homoMatrix [1][2] + 
+               homoMatrix [0][1] * homoMatrix [1][0] * homoMatrix [3][2] - 
+               homoMatrix [0][1] * homoMatrix [3][0] * homoMatrix [1][2] - 
+               homoMatrix [0][2] * homoMatrix [1][0] * homoMatrix [3][1] + 
+               homoMatrix [0][2] * homoMatrix [3][0] * homoMatrix [1][1];
+
+     temp.homoMatrix [3][3] = homoMatrix [0][0] * homoMatrix [1][1] * homoMatrix [2][2] - 
+              homoMatrix [0][0] * homoMatrix [2][1] * homoMatrix [1][2] - 
+              homoMatrix [0][1] * homoMatrix [1][0] * homoMatrix [2][2] + 
+              homoMatrix [0][1] * homoMatrix [2][0] * homoMatrix [1][2] + 
+              homoMatrix [0][2] * homoMatrix [1][0] * homoMatrix [2][1] - 
+              homoMatrix [0][2] * homoMatrix [2][0] * homoMatrix [1][1];
+
+    det = homoMatrix [0][0] *  temp.homoMatrix [0][0] + homoMatrix [1][0] *  temp.homoMatrix [0][1] + homoMatrix [2][0] *  temp.homoMatrix [0][2] + homoMatrix [3][0] *  temp.homoMatrix [0][3];
+
+	//perhaps somewarning about whether the matrix is invertable would be nice
+    if (det == 0)
+		cout << " WARNING MATRIX IS SINGULAR"<< endl;
+    //    return false;
+
+    det = 1.0 / det;
+
+	//put entries in tempout
+	for (int row =0; row<4; row = row+1){
+		for (int column =0; column<3; column = column+1){
+			tempout.homoMatrix[row][column] = temp.homoMatrix[row][column]*det;
+		}
+	}
+    return tempout;
+}
