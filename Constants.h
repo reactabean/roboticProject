@@ -68,16 +68,16 @@
 #define L9 30
 #define Lmax 410
 
-#define l1 405/1000
-#define l2 70/1000
-#define l3 195/1000
-#define l4 142/1000
-#define l5 140/1000
-#define l6 80/1000
-#define l7 130/1000
-#define l8 10/1000
-#define l9 30/1000
-#define lmax 410/1000
+#define l1 0.405
+#define l2 0.07
+#define l3 0.195
+#define l4 0.142
+#define l5 0.14
+#define l6 0.08
+#define l7 0.13
+#define l8 0.01
+#define l9 0.03
+#define lmax 0.41
 
 #define M1 1.7
 #define M2 1.0
