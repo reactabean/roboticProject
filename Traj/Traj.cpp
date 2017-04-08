@@ -7,7 +7,7 @@ using namespace std;
 
 
 //this function is to traverse between a set of inputted  joints using a cubic spline
-bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &final, double diftime)
+bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &final, double diftime,bool manualControl)
 {
 	//todo: dump ideal positions to csv
 	//todo: note I am setting the velocity at via points to be zero this is a bit ugly maybe rethink cubic spline interpolation
@@ -18,6 +18,7 @@ bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &fina
 	//local variables
 	JOINT position,velocity,acceleration, currentPosition;
 	JOINT finalvel, finalacc;
+	JOINT actualVel = {0,0,0,0};
 	double timeslice,time;
     cubicCoef temp;
 	bool error;
@@ -185,11 +186,17 @@ bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &fina
 			error = !checkCubicValues(position, velocity, acceleration);
 			if (error) cout << "In block " << section+1 << endl;
 
-			//send move
-			MoveWithConfVelAcc(position, velocity, acceleration);
+		
+			if (manualControl == true){
+				moveCont(position, velocity, acceleration , actualVel);
+			} else {
+				//send move
+				MoveWithConfVelAcc(position, velocity, acceleration);
+				//wait sample time
+				Sleep(10);
+			}
 
-			//wait sample time
-			Sleep(10);
+
 
 			//update clock
 			after = clock();
