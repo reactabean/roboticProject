@@ -134,12 +134,13 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 		}
 
 		// For debuging, delete on final delivery
-		cout <<"=======dump of parameters========"<< endl;
+		/*cout <<"=======dump of parameters========"<< endl;
 		cout << pos[0] << "," << pos[1] << "," << pos[2] << "," << pos[3] << endl;
 		cout << vel[0] << "," << vel[1] << "," << vel[2] << "," << vel[3] << endl;
-		cout << acc[0] << "," << acc[1] << "," << acc[2] << "," << acc[3] << endl;
+		cout << acc[0] << "," << acc[1] << "," << acc[2] << "," << acc[3] << endl;*/
 		work = DisplayConfiguration(pos);
 		if (!work) cout << "Cannot Display Configuration " << endl;
+		checkCubicValues(pos, vel, acc);
 
 		Sleep(deltaT);
 		after = clock();

@@ -4,7 +4,6 @@
 #ifndef DYNAMICSIM_H
 #define DYNAMICSIM_H
 
-
 #ifndef ENSC488_H
 #define ENSC488_H
 #include "../ensc-488.h"
@@ -16,7 +15,7 @@
 #include <windows.h> //this is for sleep
 #include <math.h> //this is for sin, cos
 #include "../Comp1/Comp1.h"
-//#include "../Traj/Traj.h" 
+#include "../Traj/Traj.h" 
 using namespace std;
 
 // According to exercise 6.2

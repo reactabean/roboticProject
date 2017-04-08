@@ -80,7 +80,7 @@
 #define lmax 0.41
 
 #define frictCoeff 0.5
-#define deltaT 10
+#define deltaT 5
 
 #define M1 1.7
 #define M2 1.0
