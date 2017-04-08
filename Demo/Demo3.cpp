@@ -35,6 +35,7 @@ double inputtime();
 bool cartToJoint(JOINT &temp, JOINT &tempStart);
 double jointDistanceToViaPoint(JOINT &temp, JOINT &tempStart); 
 void inputTorque(JOINT &temp);
+double quickTraj(JOINT &joint1,JOINT &joint2,JOINT &joint3,JOINT &finaljoint);
 
 int main(int argc, char* argv[])
 {	
@@ -44,7 +45,7 @@ int main(int argc, char* argv[])
 	JOINT position, velocity, acceleration;
 	jointReturn jointSolution;
 	bool works;
-	char selection;
+	char selection, type;
 	double distance1, distance2;
 	double diftime;
 	double period;
@@ -170,33 +171,42 @@ int main(int argc, char* argv[])
 
 			//start frame
 			GetConfiguration(jointParam);
+				
+			cout << "if you want a demo trajectory type '1' else type any character " << endl;
+			cin >> type;
 
-			//first frame
-			cout << "----entering first frame----" << endl;
-			if (!cartToJoint(joint1, jointParam)){
-				break;
-			}
+			// below is the demo trajectory for use in testing
+			if (type == '1'){
+				diftime  = quickTraj(joint1,joint2,joint3,finaljoint);
+			} else{
 
-			//second frame
-			cout << "----entering second frame----" << endl;
-			if (!cartToJoint(joint2, joint1)) {
-				break;
-			}
+				//first frame
+				cout << "----entering first frame----" << endl;
+				if (!cartToJoint(joint1, jointParam)){
+					break;
+				}
+
+				//second frame
+				cout << "----entering second frame----" << endl;
+				if (!cartToJoint(joint2, joint1)) {
+					break;
+				}
 			
-			//third frame
-			cout << "----entering third frame----" << endl;
-			if (!cartToJoint(joint3, joint2)) {
-				break;
-			}
+				//third frame
+				cout << "----entering third frame----" << endl;
+				if (!cartToJoint(joint3, joint2)) {
+					break;
+				}
 			
-			//final frame
-			cout << "----entering finaljoint frame----" << endl;
-			if (!cartToJoint(finaljoint, joint3)) {
-				break;
-			}
+				//final frame
+				cout << "----entering finaljoint frame----" << endl;
+				if (!cartToJoint(finaljoint, joint3)) {
+					break;
+				}
 
-			//time required frame
-			diftime = inputtime();
+				//time required frame
+				diftime = inputtime();
+			}
 
 			//travel stage
 			works = movetraj(jointParam,joint1,joint2,joint3,finaljoint,diftime,true);
@@ -236,6 +246,8 @@ void inputTorque(JOINT &temp) {
 	cout << "please enter torque for joint 4" << endl;
 	cin >> temp[3];
 }
+
+
 
 frameParam_t inputCartCoordinates(){
 	frameParam_t temp;
@@ -355,6 +367,32 @@ bool cartToJoint(JOINT &temp, JOINT &tempStart) {
 	return error;
 }
 
+double quickTraj(JOINT &joint1,JOINT &joint2,JOINT &joint3,JOINT &finaljoint){
+
+	//change as desired!
+	joint1[0] =0;
+	joint1[1] =0;
+    joint1[2] =-175;
+	joint1[3] =0;
+
+	joint2[0] =0;
+	joint2[1] =0;
+	joint2[2] =-175;
+	joint2[3] =0;
+
+	joint3[0] =0;
+	joint3[1] =0;
+	joint3[2] =-175;
+	joint3[3] =0;
+
+	finaljoint[0] =0;
+	finaljoint[1] =0;
+	finaljoint[2] =-175;
+	finaljoint[3] =0;
+
+	//10 seconds
+	return 10*1000;
+}
 
 
 
