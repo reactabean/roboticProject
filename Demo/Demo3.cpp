@@ -199,7 +199,7 @@ int main(int argc, char* argv[])
 			diftime = inputtime();
 
 			//travel stage
-			works = movetraj(jointParam,joint1,joint2,joint3,finaljoint,diftime);
+			works = movetraj(jointParam,joint1,joint2,joint3,finaljoint,diftime,true);
 			break;
 
 		case 't'  :
@@ -207,6 +207,10 @@ int main(int argc, char* argv[])
 			inputTorque(tau);
 			cout << "----entering the duration in second----" << endl;
 			cin >> period;
+			velocity[0] = 0;
+			velocity[1] = 0;
+			velocity[2] = 0;
+			velocity[3] = 0;
 			update(tau, position, velocity, acceleration, 1000*period);
 			break;
 
