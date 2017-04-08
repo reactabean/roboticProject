@@ -5,29 +5,34 @@
 #include "DynamicSim.h"
 using namespace std;
 
+
+// todo list for funtion:
+// add variable checks
+// output values to file 
+// move some assignments to the constant file 
+// fix the dynamical matlab assignments
+
 // Dynamic simulator for the manipulator, calculate the theta, theta_dot and theta_double_dot with given torque
 //Euler-integration routine 
 void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 {	
-	//todo
+	//todo:
 	//should do a torque check!
-
 
 	// Local variables
 	JOINT initialPosition, position, velocity, acceleration, dispPosition;
 	HomoMat M, invM;
 	JOINT V, G, F, temp;
 	time_t before, after;
-	double deltaT = 10;
+	double deltaT = 10;  //todo:  perhaps move this constant assignment to the constant file?
 	double v;  
 	double theta1, theta2, D3, theta4, thetadot1, thetadot2, Ddot3, thetadot4;
 	bool work;
 
-	// Friction coefficient
+	// Friction coefficient  //todo: perhaps move this constant to the constant file?
 	v = 0.5;
 
 	// Assign initial conditions: pos = GetConfiguration(JOINT &conf), vel = [0,0,0,0]
-
 	GetConfiguration(initialPosition);
 	for (int i = 0; i < 4; i++)
 	{	
@@ -40,9 +45,11 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 		velocity[i] = 0;
 	}
 
+	//initialize timer
 	before = clock();
 	after = clock();
 
+	//start looping till time period
 	while (period > difftime(after, before))
 	{
 		theta1 = position[0];
@@ -56,8 +63,8 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 		thetadot4 = velocity[3];
 
 
-		// To do: Assign the matrices for dynamic equation according to matlab result
-		// M,V,G,F
+		// Matlab result==========================================================
+		// M,V,G,F   
 		M.homoMatrix[0][0] = l9 * l9 * M4 + l4*M3*(l4 + l3*cos(theta2)) + l9*M4*(l9 + cos(theta4)*(l4 + l3*cos(theta2)) + l3*sin(theta2)*sin(theta4)) + l3 * l3 * M2*cos(2 * theta2);
 		M.homoMatrix[0][1] = l4 * l4 * M3 + l9 * l9 * M4 + l9*M4*(l9 + l4*cos(theta4));
 		M.homoMatrix[0][2] = 0;
@@ -87,34 +94,34 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 		G[1] = l4*M3*(gravity*cos(theta1)*cos(theta2) - gravity*sin(theta1)*sin(theta2)) + l9*M4*(cos(theta4)*(gravity*cos(theta1)*cos(theta2) - gravity*sin(theta1)*sin(theta2)) + sin(theta4)*(gravity*cos(theta1)*sin(theta2) + gravity*cos(theta2)*sin(theta1)));
 		G[2] = 0;
 		G[3] = -l9*M4*(cos(theta4)*(gravity*cos(theta1)*cos(theta2) - gravity*sin(theta1)*sin(theta2)) + sin(theta4)*(gravity*cos(theta1)*sin(theta2) + gravity*cos(theta2)*sin(theta1)));
+		//==========================================================
 
+		//todo fix this is not correct // do not know if this works properly
+		invM = M.TINVERT4();
 
-		invM = M.TINVERT();
-
+		//build up the f and temp vectors
 		for (int i = 0; i < 4; i++)
 		{
 			F[i] = v * velocity[i];
-			//todo:
-			//acceleration = invM * (tau - V - G - F); ? 
-			//acceleration[i] = 0; may need to add
-			//or is it acceleration = invM * (tau - V - G - F)
 			temp[i] = tau[i] - V[i] - G[i] - F[i];
 		}
 
 
 		for (int i = 0; i < 4; i++)
 		{
+			//acceleration calculation
 			acceleration[i] = 0;
 			for (int j = 0; j < 4; j++)
 			{	
-				//maybe we should zero out values if its small enough
 				acceleration[i] = acceleration[i] +  invM.homoMatrix[i][j] * temp[j];
 			}
 
+			//zero out values to account for numerical error
 			if (abs(acceleration[i]) < 0.01){
 				acceleration[i] = 0;
 			}
 
+			//velocity and position calculation
 			velocity[i] = velocity[i] + acceleration[i] * deltaT / 1000;
 			position[i] = position[i] + velocity[i] * deltaT / 1000 + 0.5 * acceleration[i] * (deltaT / 1000) * (deltaT / 1000);
 
@@ -123,8 +130,12 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 			vel[i] = velocity[i];
 			acc[i] = acceleration[i];
 		}
-		// For debuging, delete on final delivery
-		cout << pos[0] << "," << pos[1] << "," << pos[2] << "," << pos[3] << endl; 
+		// For debugging, delete on final delivery
+		cout <<"dump of parameters=============="<< endl;
+		cout << pos[0] << "," << pos[1] << "," << pos[2] << "," << pos[3] << endl;
+		cout << vel[0] << "," << vel[1] << "," << vel[2] << "," << vel[3] << endl;
+		cout << acc[0] << "," << acc[1] << "," << acc[2] << "," << acc[3] << endl;
+		cout <<"============================"<< endl;
 
 		//To format the radian represntation of postion into angles for display
 		for (int i = 0; i < 4; i++)
@@ -139,11 +150,11 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 
 		
 		work = DisplayConfiguration(dispPosition);
-		if (!work) cout << " Doesn't work for DisplayConfiguration " << endl;
+		if (!work) cout << "Cannot Display Configuration " << endl;
+
+		//update clock , and wait for the samp times 
 		Sleep(deltaT);
 		after = clock();
 	}
 
 }
-
-
