@@ -84,29 +84,10 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 
 		G[0] = 0;
 		G[1] = 0;
-		G[2] = M3 + M4;
+		G[2] = -gravity*(M3 + M4);
 		G[3] = 0;
 
-		// Inverse the mass matrix 
-		invM.homoMatrix[0][0] = 1.0 / (l3*l3) / (M2*cos(theta2*2.0));
-		invM.homoMatrix[0][1] = -1.0 / (l3*l3) / (M2*cos(theta2*2.0));
-		invM.homoMatrix[0][2] = 0;
-		invM.homoMatrix[0][3] = 0;
-
-		invM.homoMatrix[1][0] = -(1.0 / (l3*l3)*(l4 + l3*cos(theta2))) / (M2*l4*(pow(cos(theta2), 2.0)*2.0 - 1.0));
-		invM.homoMatrix[1][1] = (1.0 / (l3*l3)*1.0 / (l4*l4)*(M3*(l4*l4) + M2*(l3*l3)*(pow(cos(theta2), 2.0)*2.0 - 1.0) + M3*l3*l4*cos(theta2))) / (M2*M3*(pow(cos(theta2), 2.0)*2.0 - 1.0));
-		invM.homoMatrix[1][2] = 0;
-		invM.homoMatrix[1][3] = 1.0 / (l4*l4) / M3;
-
-		invM.homoMatrix[2][0] = 0;
-		invM.homoMatrix[2][1] = 0;
-		invM.homoMatrix[2][2] = 1.0 / (M3 + M4);
-		invM.homoMatrix[2][3] = 0;
-
-		invM.homoMatrix[3][0] = (-l9*cos(theta2) + l4*sin(theta2)*sin(theta4)*(1.0 / 2.0)) / (M2*l3*l4*l9*(pow(cos(theta2), 2.0)*2.0 - 1.0));
-		invM.homoMatrix[3][1] = (1.0 / (l4*l4)*(-M3*(l4*l4)*sin(theta2)*sin(theta4) + M3*l4*l9*cos(theta2)*2.0 + M2*l3*l9*(pow(cos(theta2), 2.0)*2.0 - 1.0)*2.0 + M2*l3*l4*cos(theta4)*(pow(cos(theta2), 2.0)*2.0 - 1.0))*(1.0 / 2.0)) / (M2*M3*l3*l9*(pow(cos(theta2), 2.0)*2.0 - 1.0));
-		invM.homoMatrix[3][2] = 0;
-		invM.homoMatrix[3][3] = (1.0 / (l4*l4)*1.0 / (l9*l9)*(M3*(l4*l4) + M4*(l9*l9)*2.0 + M4*l4*l9*cos(theta4))*(1.0 / 2.0)) / (M3*M4);
+		invM = M.TINVERT4();
 
 		for (int i = 0; i < 4; i++)
 		{
@@ -153,12 +134,10 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 		}
 
 		// For debuging, delete on final delivery
-		// cout <<"dump of parameters=============="<< endl;
-		// cout << pos[0] << "," << pos[1] << "," << pos[2] << "," << pos[3] << endl;
-		// cout << vel[0] << "," << vel[1] << "," << vel[2] << "," << vel[3] << endl;
-		// cout << acc[0] << "," << acc[1] << "," << acc[2] << "," << acc[3] << endl;
-		// cout << "============================" << endl;
+		cout <<"=======dump of parameters========"<< endl;
 		cout << pos[0] << "," << pos[1] << "," << pos[2] << "," << pos[3] << endl;
+		cout << vel[0] << "," << vel[1] << "," << vel[2] << "," << vel[3] << endl;
+		cout << acc[0] << "," << acc[1] << "," << acc[2] << "," << acc[3] << endl;
 		work = DisplayConfiguration(pos);
 		if (!work) cout << "Cannot Display Configuration " << endl;
 
