@@ -21,7 +21,10 @@ n = sym(zeros(3, jointNum));
 
 frequency(:, 1) = jointVelocities(1)*zvector;
 frequencyderivative(:, 1) = jointAccelerations(1)*zvector;
-vDerivative(:, 1) = rotationMatrices(:, :, 1).'*yvector*gravity;
+%?? the gravity should along along negative z axis for first 3 joints and positive z axis for the last joint?
+% I guess this is for joint1, could you change it for other joints as well?
+vDerivative(:, 1) = rotationMatrices(:, :, 1).'*zvector* (-gravity); 
+
 prismaticComponent = cross(2*frequency(:, 1), prismaticVelocity(1)*zvector) + prismaticAcceleration(1)*zvector;
 Vc(:, 1) = cross(frequencyderivative(:, 1), centersOfMass(:, 1)) + cross(frequency(:, 1), cross(frequency(:, 1), centersOfMass(:, 1))) + vDerivative(:, 1) + prismaticComponent;
 F(:, 1) = jointMasses(1)*Vc(:, 1);

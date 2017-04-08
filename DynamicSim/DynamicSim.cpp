@@ -5,6 +5,12 @@
 #include "DynamicSim.h"
 using namespace std;
 
+// todo list for funtion:
+// add variable checks
+// output values to file 
+// move some assignments to the constant file 
+// fix the dynamical matlab assignments
+
 // Dynamic simulator for the manipulator, calculate the theta, theta_dot and theta_double_dot with given torque
 //Euler-integration routine 
 void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
@@ -12,22 +18,15 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 	//todo
 	//should do a torque check!
 
-
 	// Local variables
 	JOINT initialPosition, position, velocity, acceleration, dispPosition;
 	HomoMat M, invM;
 	JOINT V, G, F, temp;
 	time_t before, after;
-	double deltaT = 10;
-	double v;
 	double theta1, theta2, D3, theta4, thetadot1, thetadot2, Ddot3, thetadot4;
 	bool work;
 
-	// Friction coefficient
-	v = 0.5;
-
 	// Assign initial conditions: pos = GetConfiguration(JOINT &conf), vel = [0,0,0,0]
-
 	GetConfiguration(initialPosition);
 	for (int i = 0; i < 4; i++)
 	{
@@ -56,9 +55,9 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 		thetadot4 = velocity[3];
 
 
-		// To do: Assign the matrices for dynamic equation according to matlab result
-		// M,V,G,F
-		M.homoMatrix[0][0] = M4*(l9*l9) + M4*l9*(l9 + cos(theta4)*(l4 + l3*cos(theta2)) + l3*sin(theta2)*sin(theta4)) + M3*l4*(l4 + l3*cos(theta2)) + M2*(l3*l3)*cos(theta2*2.0);
+		// Matlab result==========================================================
+		// M, V, G, F, invM
+		M.homoMatrix[0][0] = M4*(l9*l9) + l3*(M2*l3*pow(cos(theta2), 2.0) - M2*l3*pow(sin(theta2), 2.0)) + M4*l9*(l9 + cos(theta4)*(l4 + l3*cos(theta2)) + l3*sin(theta2)*sin(theta4)) + M3*l4*(l4 + l3*cos(theta2));
 		M.homoMatrix[0][1] = M3*(l4*l4) + M4*(l9*l9) + M4*l9*(l9 + l4*cos(theta4));
 		M.homoMatrix[0][2] = 0;
 		M.homoMatrix[0][3] = -2 * l9 * l9 * M4;
@@ -78,15 +77,15 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 		M.homoMatrix[3][2] = 0;
 		M.homoMatrix[3][3] = 2 * l9 * l9 * M4;
 
-		V[0] = (l3*l3)*M2*(thetadot1*thetadot1)*sin(theta2*2.0) + l3*l4*M3*(thetadot1*thetadot1)*sin(theta2) - l4*l9*M4*(thetadot1*thetadot1)*sin(theta4) - l4*l9*M4*(thetadot2*thetadot2)*sin(theta4) + l3*l9*M4*(thetadot1*thetadot1)*sin(theta2 - theta4) - l4*l9*M4*thetadot1*thetadot2*sin(theta4)*2.0;
-		V[1] = l3*l4*M3*(thetadot1*thetadot1)*sin(theta2) - l4*l9*M4*(thetadot1*thetadot1)*sin(theta4) - l4*l9*M4*(thetadot2*thetadot2)*sin(theta4) + l3*l9*M4*(thetadot1*thetadot1)*sin(theta2 - theta4) - l4*l9*M4*thetadot1*thetadot2*sin(theta4)*2.0;
+		V[0] = -M4*l9*(sin(theta4)*(l4*pow(thetadot1 + thetadot2, 2.0) + l3*(thetadot1*thetadot1)*cos(theta2)) - l3*(thetadot1*thetadot1)*cos(theta4)*sin(theta2)) + M2*(l3*l3)*(thetadot1*thetadot1)*cos(theta2)*sin(theta2)*2.0 + M3*l3*l4*(thetadot1*thetadot1)*sin(theta2);
+		V[1] = -M4*l9*(sin(theta4)*(l4*pow(thetadot1 + thetadot2, 2.0) + l3*(thetadot1*thetadot1)*cos(theta2)) - l3*(thetadot1*thetadot1)*cos(theta4)*sin(theta2)) + M3*l3*l4*(thetadot1*thetadot1)*sin(theta2);
 		V[2] = 0;
-		V[3] = l9*M4*(l4*(thetadot1*thetadot1)*sin(theta4) + l4*(thetadot2*thetadot2)*sin(theta4) - l3*(thetadot1*thetadot1)*sin(theta2 - theta4) + l4*thetadot1*thetadot2*sin(theta4)*2.0);
+		V[3] = M4*l9*(sin(theta4)*(l4*pow(thetadot1 + thetadot2, 2.0) + l3*(thetadot1*thetadot1)*cos(theta2)) - l3*(thetadot1*thetadot1)*cos(theta4)*sin(theta2));
 
-		G[0] = M3*gravity*l4*cos(theta1 + theta2) + M2*gravity*l3*cos(theta1 + theta2*2.0) + M4*gravity*l9*cos(theta1 + theta2 - theta4);
-		G[1] = M3*gravity*l4*cos(theta1 + theta2) + M4*gravity*l9*cos(theta1 + theta2 - theta4);
-		G[2] = 0;
-		G[3] = -M4*gravity*l9*cos(theta1 + theta2 - theta4);
+		G[0] = 0;
+		G[1] = 0;
+		G[2] = M3 + M4;
+		G[3] = 0;
 
 		// Inverse the mass matrix 
 		invM.homoMatrix[0][0] = 1.0 / (l3*l3) / (M2*cos(theta2*2.0));
@@ -111,7 +110,7 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 
 		for (int i = 0; i < 4; i++)
 		{
-			F[i] = v * velocity[i];
+			F[i] = frictCoeff * velocity[i];
 			// temp is (tau - V - G - F)
 			temp[i] = tau[i] - V[i] - G[i] - F[i];
 		}
@@ -119,6 +118,7 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 
 		for (int i = 0; i < 4; i++)
 		{
+			//acceleration calculation
 			acceleration[i] = 0;
 			for (int j = 0; j < 4; j++)
 			{
@@ -131,6 +131,7 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 				acceleration[i] = 0;
 			}
 
+			//velocity and position calculation
 			velocity[i] = velocity[i] + acceleration[i] * deltaT / 1000;
 			position[i] = position[i] + velocity[i] * deltaT / 1000 + 0.5 * acceleration[i] * (deltaT / 1000) * (deltaT / 1000);
 
@@ -152,9 +153,14 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 		}
 
 		// For debuging, delete on final delivery
+		// cout <<"dump of parameters=============="<< endl;
+		// cout << pos[0] << "," << pos[1] << "," << pos[2] << "," << pos[3] << endl;
+		// cout << vel[0] << "," << vel[1] << "," << vel[2] << "," << vel[3] << endl;
+		// cout << acc[0] << "," << acc[1] << "," << acc[2] << "," << acc[3] << endl;
+		// cout << "============================" << endl;
 		cout << pos[0] << "," << pos[1] << "," << pos[2] << "," << pos[3] << endl;
 		work = DisplayConfiguration(pos);
-		if (!work) cout << " Doesn't work for DisplayConfiguration " << endl;
+		if (!work) cout << "Cannot Display Configuration " << endl;
 
 		Sleep(deltaT);
 		after = clock();
