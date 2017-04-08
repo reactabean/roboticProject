@@ -25,7 +25,7 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 	JOINT V, G, F, temp;
 	time_t before, after;
 	double theta1, theta2, D3, theta4, thetadot1, thetadot2, Ddot3, thetadot4;
-	bool work;
+	bool work, error;
 
 	// Assign initial conditions: pos = GetConfiguration(JOINT &conf), vel = whatever gets passed in //this is because we cannot make anyassumptions about the current speed of the robot when torque is applied
 	GetConfiguration(initialPosition);
@@ -44,6 +44,10 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 	before = clock();
 	after = clock();
 
+	ofstream myfile;
+	myfile.open("simulatorOutput.csv");
+	myfile << "time(ms), theta1, theta2, d3, theta4, thetadot1, thetadot2, ddot3, thetadot4, thetadotdot1, thetadotdot2, ddotdot3, thetadotdot4  \n";
+
 	while (period > difftime(after, before))
 	{
 
@@ -53,14 +57,17 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 		Vfun(V,position, velocity);
 		Gfun(G);
 		Ffun(F, velocity);
-		//
 
 		invM = M.TINVERT4();
+
+		//M.PRINTT();
+		//invM.PRINTT();
 
 		for (int i = 0; i < 4; i++)
 		{
 			// temp is (tau - V - G - F)
 			temp[i] = tau[i] - V[i] - G[i] - F[i];
+			//cout << "temp" << i << "," << temp[i] << endl;
 		}
 
 
@@ -101,9 +108,13 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 		cout << pos[0] << "," << pos[1] << "," << pos[2] << "," << pos[3] << endl;
 		cout << vel[0] << "," << vel[1] << "," << vel[2] << "," << vel[3] << endl;
 		cout << acc[0] << "," << acc[1] << "," << acc[2] << "," << acc[3] << endl;*/
+		
+		after = clock();
+		printPosVelAccToFile(myfile, pos, vel, acc, difftime(after, before));
+
+		error = !checkCubicValues(pos, vel, acc);
 		work = DisplayConfiguration(pos);
-		if (!work) cout << "Cannot Display Configuration " << endl;
-		checkCubicValues(pos, vel, acc);
+		if (!work) cout << "Cannot Display Configuration" << endl;
 
 		Sleep(deltaT);
 		after = clock();
@@ -111,6 +122,9 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 
 }
 
+void printPosVelAccToFile(ofstream &outputFile, JOINT &pos, JOINT &vel, JOINT &acc, double time) {
+	outputFile << time << "," << pos[0] << "," << pos[1] << "," << pos[2] << "," << pos[3] << "," << vel[0] << "," << vel[1] << "," << vel[2] << "," << vel[3] << "," << acc[0] << "," << acc[1] << "," << acc[2] << "," << acc[3] << endl;
+}
 
 void Gfun( JOINT &G){
 	G[0] = 0;
