@@ -96,14 +96,14 @@
 #define CONTROLLERTIME   10 // 10 ms given to controller to achieve desired pos, velocity, and acceleration. 
 #define CONTROLLERSAMPTIME 2 //2 ms given between each controller 'tick'
 
-//should be large as possible to reduce settling time
-#define KP1 1 //todo: set properly 
-#define KP2 1 //todo: set properly
-#define KP3 1 //todo: set properly 
-#define KP4 1 //todo: set properly 
+//set using values given in assignment text
+#define KP1 175 
+#define KP2 110 
+#define KP3 40 
+#define KP4 20 
 
 //should be 2*SQRT(KPi)
-#define KV1 1 //todo: set properly 
-#define KV2 1 //todo: set properly
-#define KV3 1 //todo: set properly 
-#define KV4 1 //todo: set properly
+#define KV1 26.5 
+#define KV2 10.5 
+#define KV3 12.65 
+#define KV4 9 
