@@ -26,6 +26,12 @@ bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &fina
 	cubicJoints jointSet[4];
 	time_t before, after;
 
+	ofstream myfile,emufile,controlfile;
+	myfile.open("currentPosition.csv");
+	emufile.open("simulatorOutput.csv");
+	myfile << "theta1, theta2, d3, theta4, time(ms) \n";
+	emufile << "time(ms), theta1, theta2, d3, theta4, thetadot1, thetadot2, ddot3, thetadot4, thetadotdot1, thetadotdot2, ddotdot3, thetadotdot4  \n";
+
 	//evenly distributed time needed to traverse between via points
 	timeslice =  diftime / 4;	
 
@@ -145,9 +151,7 @@ bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &fina
 
 	//STAGE 2: SAMPLE AND TRAVERSE PATH   // !!!!this stage has not been fully implemented!!!!
 	///=======================================needs work below this=============================
-	ofstream myfile;
-	myfile.open("currentPosition.csv");
-	myfile << "theta1, theta2, d3, theta4, time(ms) \n";
+
 	printJointToFile(myfile, start, 0);
 	printJointToFile(myfile, first, 0);
 	printJointToFile(myfile, second, 0);
@@ -188,7 +192,7 @@ bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &fina
 
 		
 			if (manualControl == true){
-				moveCont(position, velocity, acceleration , actualVel);
+				moveCont(position, velocity, acceleration , actualVel,emufile);
 			} else {
 				//send move
 				MoveWithConfVelAcc(position, velocity, acceleration);
@@ -238,17 +242,20 @@ void calcCubicAcc(JOINT &acc, cubicJoints &block, double t, double timeslice){
 bool checkCubicValues(JOINT &position,JOINT &velocity,JOINT &acceleration){
 	//check and make sure they do not violate joint limits
 	//Todo: write the function
-	bool clear;
-	clear = 0;
+	bool clearPos, clearVel, clearAcc;
+	clearPos = 0;
+	clearVel = 0; 
+	clearAcc = 0;
+
 	if ((position[0] <= HIGHTHEATA1) && (position[0] >= LOWTHEATA1)
 		&& (position[1] <= HIGHTHEATA2) && (position[1] >= LOWTHEATA12)
 		&& (position[2] <= HIGHDISTANCE3) && (position[2] >= LOWDISTANCE3)
 		&& (position[3] <= HIGHTHEATA4) && (position[3] >= LOWTHEATA4))
 	{
-		clear = 1;
+		clearPos = 1;
 	}
 	else {
-		clear = 0;
+		clearPos = 0;
 		cout << "Violating joint limits at " << position[0] << "," << position[1] << "," << position[2] << "," << position[3] << endl;
 	}
 
@@ -257,10 +264,10 @@ bool checkCubicValues(JOINT &position,JOINT &velocity,JOINT &acceleration){
 		&& (velocity[2] <= HIGHDISTANCEVEL3) && (velocity[2] >= LOWDISTANCEVEL3)
 		&& (velocity[3] <= HIGHTHEATAVEL4) && (velocity[3] >= LOWTHEATAVEL4))
 	{
-		clear = 1;
+		clearVel = 1;
 	}
 	else {
-		clear = 0;
+		clearVel = 0;
 		cout << "Violating velocity limits at " << velocity[0] << "," << velocity[1] << "," << velocity[2] << "," << velocity[3] << endl;
 	
 	}
@@ -270,13 +277,13 @@ bool checkCubicValues(JOINT &position,JOINT &velocity,JOINT &acceleration){
 		&& (acceleration[2] <= HIGHDISTANCEACC3) && (acceleration[2] >= LOWDISTANCEACC3)
 		&& (acceleration[3] <= HIGHTHEATAACC4) && (acceleration[3] >= LOWTHEATAACC4))
 	{
-		clear = 1;
+		clearAcc = 1;
 	}
 	else {
-		clear = 0;
+		clearAcc = 0;
 		cout << "Violating acceleration limits at " << acceleration[0] << "," << acceleration[1] << "," << acceleration[2] << "," << acceleration[3] << endl;
 	}
-	return clear;
+	return (clearPos & clearVel & clearAcc);
 }
 
 void printJointToFile(ofstream &outputFile, JOINT &toPrint, double time) {

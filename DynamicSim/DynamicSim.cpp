@@ -6,15 +6,14 @@
 using namespace std;
 
 // todo list for funtion:
-// add variable checks
-// output values to file 
-// move some assignments to the constant file 
-// fix the dynamical matlab assignments
+//fix file outputs
+//fix jointlimitmaxing
+
 
 // pos,vel,acc are expected to be in degrees rather then radians
 // Dynamic simulator for the manipulator, calculate the theta, theta_dot and theta_double_dot with given torque
 //Euler-integration routine 
-void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
+void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period, ofstream& myfile )
 {
 	//todo
 	//should do a torque check!
@@ -43,13 +42,7 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 
 	before = clock();
 	after = clock();
-
-
-
-	ofstream myfile;
-	myfile.open("simulatorOutput.csv");
-	myfile << "time(ms), theta1, theta2, d3, theta4, thetadot1, thetadot2, ddot3, thetadot4, thetadotdot1, thetadotdot2, ddotdot3, thetadotdot4  \n";
-
+	
 	while (period > difftime(after, before))
 	{
 
@@ -115,11 +108,19 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 		printPosVelAccToFile(myfile, pos, vel, acc, difftime(after, before));
 		
 		error = !checkCubicValues(pos, vel, acc);
-		
+
+		//for debugging 
+		//do not know if this is a good idea or not
+		if (error == 1) {
+			jointposMaxing(pos,position);
+			cout << "In violation of joint Configuration, not letting it move further" << endl;
+		}
+
 		work = DisplayConfiguration(pos);
 		
-		if (!work) cout << "Cannot Display Configuration " << endl;
-		
+		if (!work){
+			cout << "Cannot Display Configuration " << endl;
+		}
 
 		Sleep(deltaT);
 		after = clock();
@@ -128,8 +129,8 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period)
 }
 
 
-void printPosVelAccToFile(ofstream &outputFile, JOINT &pos, JOINT &vel, JOINT &acc, double time) {
-	outputFile << time << "," << pos[0] << "," << pos[1] << "," << pos[2] << "," << pos[3] << "," << vel[0] << "," << vel[1] << "," << vel[2] << "," << vel[3] << "," << acc[0] << "," << acc[1] << "," << acc[2] << "," << acc[3] << endl;
+void printPosVelAccToFile(ofstream &outputFile, JOINT &pos, JOINT &vel, JOINT &acc, double time,JOINT &tau) {
+	outputFile << time << "," << pos[0] << "," << pos[1] << "," << pos[2] << "," << pos[3] << "," << vel[0] << "," << vel[1] << "," << vel[2] << "," << vel[3] << "," << acc[0] << "," << acc[1] << "," << acc[2] << "," << acc[3] << "," << tau[0] << "," << tau[1] << "," << tau[2] << "," << tau[3] << endl;
 }
 
 void Gfun( JOINT &G){
@@ -202,7 +203,34 @@ void Ffun (JOINT &F, JOINT &velocity) {
 		}
 }
 
+//used to keep robot moving past the joint limits. 
+void jointposMaxing( JOINT&pos, JOINT&position){
 
+
+	if (pos[0] > HIGHTHEATA1)	{pos[0]= HIGHTHEATA1;}
+	if (pos[0] < LOWTHEATA1)	{pos[0]= LOWTHEATA1;}
+	
+	if (pos[1] > HIGHTHEATA2)	{pos[1]= HIGHTHEATA2;}
+	if (pos[1] < LOWTHEATA12)	{pos[1]= LOWTHEATA12;}
+	
+	if (pos[2] > HIGHDISTANCE3)	{pos[2]= HIGHDISTANCE3;}
+	if (pos[2] < LOWDISTANCE3)	{pos[2]= LOWDISTANCE3;}
+
+	if (pos[3] > HIGHTHEATA4)	{pos[3]= HIGHTHEATA4;}
+	if (pos[3] < LOWTHEATA4)	{pos[3]= LOWTHEATA4;}
+
+	for (int i = 0; i < 4; i++)
+	{
+		if (i == 2) {
+			position[i] = pos[i];
+		}
+		else {
+			position[i] = DEG2RAD(pos[i]);
+		}
+	}
+
+
+}
 
 
 		

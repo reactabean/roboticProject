@@ -49,8 +49,8 @@ int main(int argc, char* argv[])
 	double distance1, distance2;
 	double diftime;
 	double period;
-
-
+	ofstream torquefile;
+	
 	while(1){
 	cout << "============================================="<<endl ;
 	cout << "==               DEMO 3					=="<<endl ;
@@ -213,6 +213,10 @@ int main(int argc, char* argv[])
 			break;
 
 		case 't'  :
+
+			torquefile.open("pureTorqueOutput.csv");
+			torquefile << "time(ms), theta1, theta2, d3, theta4, thetadot1, thetadot2, ddot3, thetadot4, thetadotdot1, thetadotdot2, ddotdot3, thetadotdot4 , tau1, tau2, tau3, tau4 \n";
+
 			cout << "----entering four torques to joints----" << endl;
 			inputTorque(tau);
 			cout << "----entering the duration in second----" << endl;
@@ -221,7 +225,7 @@ int main(int argc, char* argv[])
 			velocity[1] = 0;
 			velocity[2] = 0;
 			velocity[3] = 0;
-			update(tau, position, velocity, acceleration, 1000*period);
+			update(tau, position, velocity, acceleration, 1000*period,torquefile);
 			break;
 
 		case 'x'  :
