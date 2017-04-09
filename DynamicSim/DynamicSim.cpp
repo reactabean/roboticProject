@@ -131,7 +131,8 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period, ofstr
 
 
 void printPosVelAccToFile(ofstream &outputFile, JOINT &pos, JOINT &vel, JOINT &acc, double time, JOINT &tau) {
-	outputFile << time << "," << pos[0] << "," << pos[1] << "," << pos[2] << "," << pos[3] << "," << vel[0] << "," << vel[1] << "," << vel[2] << "," << vel[3] << "," << acc[0] << "," << acc[1] << "," << acc[2] << "," << acc[3] << "," << tau[0] << "," << tau[1] << "," << tau[2] << "," << tau[3] << endl;
+	outputFile << (isnan(time) ? 0 : time) << "," << (isnan(pos[0]) ? 0 : pos[0]) << "," << (isnan(pos[1]) ? 0 : pos[1]) << "," << (isnan(pos[2]) ? 0 : pos[2]) << "," << (isnan(pos[3]) ? 0 : pos[3]) << "," << (isnan(vel[0]) ? 0 : vel[0]) << "," << (isnan(vel[1]) ? 0 : vel[1]) << "," << (isnan(vel[2]) ? 0 : vel[2]) << "," << (isnan(vel[3]) ? 0 : vel[3]) << "," << (isnan(acc[0]) ? 0 : acc[0]) << "," << (isnan(acc[1]) ? 0 : acc[1]) << "," << (isnan(acc[2]) ? 0 : acc[2]) << "," << (isnan(acc[3]) ? 0 : acc[3]) << "," << (isnan(tau[0]) ? 0 : tau[0]) << "," << (isnan(tau[1]) ? 0 : tau[1]) << "," << (isnan(tau[2]) ? 0 : tau[2]) << "," << (isnan(tau[3]) ? 0 : tau[3]) << endl;
+	// matlab doesnt like nan values
 }
 
 void Gfun( JOINT &G){
