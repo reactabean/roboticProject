@@ -19,7 +19,7 @@
 using namespace std;
 
 // According to exercise 6.2
-void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period, ofstream& myfile);
+void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period, ofstream& myfile, time_t beforeC);
 void printPosVelAccToFile(ofstream &outputFile, JOINT &pos, JOINT &vel, JOINT &acc, double time, JOINT &tau);
 void Ffun (JOINT &F, JOINT &velocity);
 HomoMat Mfun(JOINT &position, JOINT &velocity);

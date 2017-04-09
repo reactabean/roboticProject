@@ -228,7 +228,7 @@ int main(int argc, char* argv[])
 			if (works == 0){
 			cout << "Torque entered is outside the limits, CANCELLED ACTION" << endl;
 			}else{
-			update(tau, position, velocity, acceleration, 1000*period,torquefile);
+			update(tau, position, velocity, acceleration, 1000*period,torquefile,clock());
 			}
 			torquefile.close();
 			break;
@@ -410,8 +410,8 @@ double quickTraj(JOINT &joint1,JOINT &joint2,JOINT &joint3,JOINT &finaljoint){
 	finaljoint[2] =-175;
 	finaljoint[3] =0;
 
-	//10 seconds
-	return 10*1000;
+	//1 seconds
+	return 1*1000;
 }
 
 

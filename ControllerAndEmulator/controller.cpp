@@ -11,7 +11,7 @@ using namespace std;
 // need error check 
 // need to pass out values
 
-bool moveCont(JOINT &dConf, JOINT &dVel, JOINT &dAcc,JOINT &tVel, ofstream& emuFile){
+bool moveCont(JOINT &dConf, JOINT &dVel, JOINT &dAcc,JOINT &tVel, ofstream& emuFile, time_t beforeT){
 	//tVel are passed in to act like initial values
 	//local variables
 	bool error;
@@ -77,7 +77,7 @@ bool moveCont(JOINT &dConf, JOINT &dVel, JOINT &dAcc,JOINT &tVel, ofstream& emuF
 
 		//applies a new torque to the emulator -  this takes in degrees 
 		//this executes for 2 ms
-		update(torque, tConf, tVel, tAcc, CONTROLLERSAMPTIME,emuFile);
+		update(torque, tConf, tVel, tAcc, CONTROLLERSAMPTIME,emuFile, beforeT);
 		
 		//update timer
 		after = clock();

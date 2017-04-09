@@ -30,7 +30,7 @@ bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &fina
 	myfile.open("currentPosition.csv");
 	emufile.open("simulatorOutput.csv");
 	myfile << "theta1, theta2, d3, theta4, time(ms) \n";
-	emufile << "time(ms), theta1, theta2, d3, theta4, thetadot1, thetadot2, ddot3, thetadot4, thetadotdot1, thetadotdot2, ddotdot3, thetadotdot4  \n";
+	emufile << "time(ms), theta1, theta2, d3, theta4, thetadot1, thetadot2, ddot3, thetadot4, thetadotdot1, thetadotdot2, ddotdot3, thetadotdot4, torque1, torque2, torque3, torque4  \n";
 
 	//evenly distributed time needed to traverse between via points
 	timeslice =  diftime / 4;	
@@ -192,7 +192,7 @@ bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &fina
 
 		
 			if (manualControl == true){
-				moveCont(position, velocity, acceleration , actualVel,emufile);
+				moveCont(position, velocity, acceleration , actualVel,emufile, before - section*timeslice);
 			} else {
 				//send move
 				MoveWithConfVelAcc(position, velocity, acceleration);

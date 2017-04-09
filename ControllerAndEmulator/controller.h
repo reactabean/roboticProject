@@ -21,7 +21,7 @@ using namespace std;
 
 //this funtion will take in a input and using control scheme drive a motion, it will keep trying to achieve the given position in a timespan.
 //inputs: time and initial velocity 
-bool moveCont(JOINT &conf, JOINT &vel, JOINT &acc, JOINT &tVel,ofstream& emuFile);
+bool moveCont(JOINT &conf, JOINT &vel, JOINT &acc, JOINT &tVel,ofstream& emuFile, time_t beforeT);
 void convertRadToDeg(JOINT &toDeg);
 void convertDegToRad(JOINT &toJoint);
 
