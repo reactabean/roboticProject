@@ -34,7 +34,7 @@ void printJoint(JOINT &temp);
 double inputtime();
 bool cartToJoint(JOINT &temp, JOINT &tempStart);
 double jointDistanceToViaPoint(JOINT &temp, JOINT &tempStart); 
-void inputTorque(JOINT &temp);
+bool inputTorque(JOINT &temp);
 double quickTraj(JOINT &joint1,JOINT &joint2,JOINT &joint3,JOINT &finaljoint);
 
 int main(int argc, char* argv[])
@@ -218,15 +218,22 @@ int main(int argc, char* argv[])
 			torquefile << "time(ms), theta1, theta2, d3, theta4, thetadot1, thetadot2, ddot3, thetadot4, thetadotdot1, thetadotdot2, ddotdot3, thetadotdot4 , tau1, tau2, tau3, tau4 \n";
 
 			cout << "----entering four torques to joints----" << endl;
-			inputTorque(tau);
+			works = inputTorque(tau);
 			cout << "----entering the duration in second----" << endl;
 			cin >> period;
 			velocity[0] = 0;
 			velocity[1] = 0;
 			velocity[2] = 0;
 			velocity[3] = 0;
+			if (works == 0){
+			cout << "Torque entered is outside the limits, CANCELLED ACTION" << endl;
+			}else{
 			update(tau, position, velocity, acceleration, 1000*period,torquefile);
+			}
+			torquefile.close();
 			break;
+
+			
 
 		case 'x'  :
 		return 0;
@@ -240,7 +247,10 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
-void inputTorque(JOINT &temp) {
+bool inputTorque(JOINT &temp) {
+	bool works;
+	works = 1 ;
+
 	cout << "please enter torque for joint 1" << endl;
 	cin >> temp[0];
 	cout << "please enter torque for joint 2" << endl;
@@ -249,6 +259,12 @@ void inputTorque(JOINT &temp) {
 	cin >> temp[2];
 	cout << "please enter torque for joint 4" << endl;
 	cin >> temp[3];
+
+	//check of values
+	if (abs(temp[0])>ROTARYTORQUE | abs(temp[1])>ROTARYTORQUE | abs(temp[2])>LINEARTORQUE | abs(temp[3])>ROTARYTORQUE){
+	works =0 ;
+	}
+	return works;
 }
 
 

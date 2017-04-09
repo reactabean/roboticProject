@@ -211,6 +211,7 @@ bool movetraj(JOINT &start, JOINT &first, JOINT &second,JOINT &third,JOINT &fina
 
 	MoveWithConfVelAcc(position, finalvel, finalacc);
 	myfile.close();
+	emufile.close();
 	return error;
 }
 

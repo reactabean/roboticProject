@@ -20,11 +20,12 @@ using namespace std;
 
 // According to exercise 6.2
 void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period, ofstream& myfile);
-void printPosVelAccToFile(ofstream &outputFile, JOINT &pos, JOINT &vel, JOINT &acc, double time);
+void printPosVelAccToFile(ofstream &outputFile, JOINT &pos, JOINT &vel, JOINT &acc, double time, JOINT &tau);
 void Ffun (JOINT &F, JOINT &velocity);
 HomoMat Mfun(JOINT &position, JOINT &velocity);
 void Vfun(JOINT &V, JOINT &position, JOINT &velocity);
 void Gfun( JOINT &G);
 void jointposMaxing( JOINT&pos, JOINT&position);
+void torquecheck( JOINT& tau);
 
 #endif //!DYNAMICSIM_H

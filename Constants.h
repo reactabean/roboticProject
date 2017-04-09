@@ -11,7 +11,6 @@
 #define HIGHTHEATA4	    160
 #define LOWTHEATA4 	   -160
 // velocity limits
-
 #define HIGHTHEATAVEL1	    150
 #define LOWTHEATAVEL1      -150
 
@@ -55,6 +54,10 @@
 //[-600 600]
 //[-200 200]
 //[-600 600]
+
+//DEFINED TORQUE LIMITS
+#define ROTARYTORQUE 16
+#define LINEARTORQUE 45
 
 //Define structure parameters
 #define L1 405
@@ -103,4 +106,4 @@
 #define KV1 1 //todo: set properly 
 #define KV2 1 //todo: set properly
 #define KV3 1 //todo: set properly 
-#define KV4 1 //todo: set properly 
+#define KV4 1 //todo: set properly

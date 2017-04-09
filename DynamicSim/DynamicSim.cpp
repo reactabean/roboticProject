@@ -15,8 +15,6 @@ using namespace std;
 //Euler-integration routine 
 void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period, ofstream& myfile )
 {
-	//todo
-	//should do a torque check!
 
 	// Local variables
 	JOINT initialPosition, position, velocity, acceleration, dispPosition;
@@ -26,6 +24,9 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period, ofstr
 	double theta1, theta2, D3, theta4, thetadot1, thetadot2, Ddot3, thetadot4;
 	bool work, error;
 
+	//should do a torque check!
+	torquecheck(tau);
+	
 	// Assign initial conditions: pos = GetConfiguration(JOINT &conf), vel = whatever gets passed in //this is because we cannot make anyassumptions about the current speed of the robot when torque is applied
 	GetConfiguration(initialPosition);
 	for (int i = 0; i < 4; i++)
@@ -105,7 +106,7 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period, ofstr
 		cout << vel[0] << "," << vel[1] << "," << vel[2] << "," << vel[3] << endl;
 		cout << acc[0] << "," << acc[1] << "," << acc[2] << "," << acc[3] << endl;*/
 		after = clock();
-		printPosVelAccToFile(myfile, pos, vel, acc, difftime(after, before));
+		printPosVelAccToFile(myfile, pos, vel, acc, difftime(after, before), tau);
 		
 		error = !checkCubicValues(pos, vel, acc);
 
@@ -129,7 +130,7 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period, ofstr
 }
 
 
-void printPosVelAccToFile(ofstream &outputFile, JOINT &pos, JOINT &vel, JOINT &acc, double time,JOINT &tau) {
+void printPosVelAccToFile(ofstream &outputFile, JOINT &pos, JOINT &vel, JOINT &acc, double time, JOINT &tau) {
 	outputFile << time << "," << pos[0] << "," << pos[1] << "," << pos[2] << "," << pos[3] << "," << vel[0] << "," << vel[1] << "," << vel[2] << "," << vel[3] << "," << acc[0] << "," << acc[1] << "," << acc[2] << "," << acc[3] << "," << tau[0] << "," << tau[1] << "," << tau[2] << "," << tau[3] << endl;
 }
 
@@ -232,5 +233,15 @@ void jointposMaxing( JOINT&pos, JOINT&position){
 
 }
 
+void torquecheck( JOINT& tau){
+	bool error; 
+	error = 0;
 
+	if (abs(tau[0])>ROTARYTORQUE | abs(tau[1])>ROTARYTORQUE | abs(tau[2])>LINEARTORQUE | abs(tau[3])>ROTARYTORQUE)
+	{
+		cout <<  " Note Torque being applied is past the intended limits at: " << tau[0] << "," << tau[1] << "," << tau[2] << "," << tau[3] <<  endl;
+		error = 1;
+	}
+
+}
 		
