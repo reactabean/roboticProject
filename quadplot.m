@@ -16,7 +16,7 @@ for i = 1:4
     vec(:, 1) = limits(1, i);
     vec(:, 2) = limits(2, i);
     hold on;
-    plot(time, 0, 'color', 'green'); % make ideal path?
+    plot(time, idealPath(:, i), 'color', 'green'); % make ideal path?
     plot(time, vec, 'color', 'red');
     title(['Values for ', inputName]);
 
