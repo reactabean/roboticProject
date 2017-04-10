@@ -176,6 +176,6 @@ circleY = 337*sind(theta);
 plot(circleX, circleY, 'color', 'red');
 legend('Joint movement path', 'Origin', 'Point 0', 'Point 1', 'Point 2', 'Point 3', 'Point 4', 'outer joint limit', 'location', 'southeast');
 xlabel('X position (mm)');
-ylabel('X position (mm)');
+ylabel('Y position (mm)');
 title('X, Y position of end effector');
 set (f2, 'Units', 'normalized', 'Position', [0,0,1,1]);
