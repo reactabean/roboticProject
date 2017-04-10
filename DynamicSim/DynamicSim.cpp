@@ -1,5 +1,5 @@
 // Library for Forward and Inverse Kinematics
-// Created by Monica Li, April 2017
+// Created by Monica Li,edited by Andrew Nichol April 2017
 
 
 #include "DynamicSim.h"
@@ -23,6 +23,12 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period, ofstr
 	time_t before, after;
 	double theta1, theta2, D3, theta4, thetadot1, thetadot2, Ddot3, thetadot4;
 	bool work, error;
+
+	// super timer variables
+	LARGE_INTEGER frequency; 
+    	LARGE_INTEGER t1,t2; 
+    	double elapsedTime; 
+    	QueryPerformanceFrequency(&frequency);
 
 	//should do a torque check!
 	torquecheck(tau);
@@ -123,7 +129,13 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period, ofstr
 			cout << "Cannot Display Configuration " << endl;
 		}
 
-		Sleep(deltaT);
+		QueryPerformanceCounter(&t1);
+		QueryPerformanceCounter(&t2);
+		elapsedTime=(float)(t2.QuadPart-t1.QuadPart)/frequency.QuadPart;
+		while(elapsedTime*1000<deltaT){
+			QueryPerformanceCounter(&t2);
+			elapsedTime=(float)(t2.QuadPart-t1.QuadPart)/frequency.QuadPart; 
+		}
 		after = clock();
 	}
 
@@ -246,4 +258,3 @@ void torquecheck( JOINT& tau){
 	}
 
 }
-		
