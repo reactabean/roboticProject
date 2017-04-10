@@ -114,14 +114,14 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period, ofstr
 		printPosVelAccToFile(myfile, pos, vel, acc, difftime(after, beforeC), tau);
 		
 		//Not sure if we need this
-		error = !checkCubicValues(pos, vel, acc);
+		/*error = !checkCubicValues(pos, vel, acc);
 
 		//for debugging 
 		//do not know if this is a good idea or not
 		if (error == 1) {
 			jointposMaxing(pos,position);
 			cout << "In violation of joint Configuration, not letting it move further" << endl;
-		}
+		}*/
 
 		work = DisplayConfiguration(pos);
 		
@@ -168,7 +168,7 @@ void Vfun(JOINT &V, JOINT &position, JOINT &velocity){
 		Ddot3 = velocity[2];
 		thetadot4 = velocity[3];
 
-		V[0] = -M4*l9*(sin(theta4)*(l4*pow(thetadot1 + thetadot2, 2.0) + l3*(thetadot1*thetadot1)*cos(theta2)) - l3*(thetadot1*thetadot1)*cos(theta4)*sin(theta2)) + M2*(l3*l3)*(thetadot1*thetadot1)*cos(theta2)*sin(theta2)*2.0 + M3*l3*l4*(thetadot1*thetadot1)*sin(theta2);
+		V[0] = -M4*l9*(sin(theta4)*(l4*(thetadot1*thetadot1) + l4*(thetadot2*thetadot2) + l3*(thetadot1*thetadot1)*cos(theta2) + l4*thetadot1*thetadot2*2.0) - l3*(thetadot1*thetadot1)*cos(theta4)*sin(theta2)) + M3*l3*l4*(thetadot1*thetadot1)*sin(theta2);
 		V[1] = -M4*l9*(sin(theta4)*(l4*pow(thetadot1 + thetadot2, 2.0) + l3*(thetadot1*thetadot1)*cos(theta2)) - l3*(thetadot1*thetadot1)*cos(theta4)*sin(theta2)) + M3*l3*l4*(thetadot1*thetadot1)*sin(theta2);
 		V[2] = 0;
 		V[3] = M4*l9*(sin(theta4)*(l4*pow(thetadot1 + thetadot2, 2.0) + l3*(thetadot1*thetadot1)*cos(theta2)) - l3*(thetadot1*thetadot1)*cos(theta4)*sin(theta2));
@@ -187,7 +187,7 @@ HomoMat Mfun(JOINT &position, JOINT &velocity){
 		Ddot3 = velocity[2];
 		thetadot4 = velocity[3];	
 
-		M.homoMatrix[0][0] = M4*(l9*l9) + l3*(M2*l3*pow(cos(theta2), 2.0) - M2*l3*pow(sin(theta2), 2.0)) + M4*l9*(l9 + cos(theta4)*(l4 + l3*cos(theta2)) + l3*sin(theta2)*sin(theta4)) + M3*l4*(l4 + l3*cos(theta2));
+		M.homoMatrix[0][0] = M2*(l3*l3) + M4*(l9*l9) + M4*l9*(l9 + cos(theta4)*(l4 + l3*cos(theta2)) + l3*sin(theta2)*sin(theta4)) + M3*l4*(l4 + l3*cos(theta2));
 		M.homoMatrix[0][1] = M3*(l4*l4) + M4*(l9*l9) + M4*l9*(l9 + l4*cos(theta4));
 		M.homoMatrix[0][2] = 0;
 		M.homoMatrix[0][3] = -2 * l9 * l9 * M4;
