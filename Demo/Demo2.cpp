@@ -193,7 +193,7 @@ int main(int argc, char* argv[])
 			diftime = inputtime();
 
 			//travel stage
-			works = movetraj(jointParam,joint1,joint2,joint3,finaljoint,diftime);
+			works = movetraj(jointParam,joint1,joint2,joint3,finaljoint,diftime, 0);
 		break;
 
 		case 'x'  :
