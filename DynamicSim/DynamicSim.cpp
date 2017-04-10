@@ -38,8 +38,8 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period, ofstr
 	for (int i = 0; i < 4; i++)
 	{
 		if (i == 2) {
-			position[i] = initialPosition[i];
-			velocity[i] = vel[i];
+			position[i] = initialPosition[i]/1000;
+			velocity[i] = vel[i]/1000;
 		}
 		else {
 			position[i] = DEG2RAD(initialPosition[i]);
@@ -59,11 +59,26 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period, ofstr
 		Gfun(G);
 		Ffun(F, velocity);
 		//
+		theta1 = position[0];
+		theta2 = position[1];
+		D3 = position[2];
+		theta4 = position[3];
+		//invM = M.TINVERT4();
 
-		invM = M.TINVERT4();
+		invM.homoMatrix[0][0] = 1.0 / (l3*l3) / M2;
+		invM.homoMatrix[0][1] = -1.0 / (l3*l3) / M2;
+		invM.homoMatrix[1][0] = -(1.0 / (l3*l3)*(l4 + l3*cos(theta2))) / (M2*l4);
+		invM.homoMatrix[1][1] = (1.0 / (l3*l3)*1.0 / (l4*l4)*(M2*(l3*l3) + M3*(l4*l4) + M3*l3*l4*cos(theta2))) / (M2*M3);
+		invM.homoMatrix[1][3] = 1.0 / (l4*l4) / M3;
+		invM.homoMatrix[2][2] = 1.0 / (M3 + M4);
+		invM.homoMatrix[3][0] = (-l9*cos(theta2) + l4*sin(theta2)*sin(theta4)*(1.0 / 2.0)) / (M2*l3*l4*l9);
+		invM.homoMatrix[3][1] = (1.0 / (l4*l4)*(M2*l3*l9*2.0 - M3*(l4*l4)*sin(theta2)*sin(theta4) + M2*l3*l4*cos(theta4) + M3*l4*l9*cos(theta2)*2.0)*(1.0 / 2.0)) / (M2*M3*l3*l9);
+		invM.homoMatrix[3][3] = (1.0 / (l4*l4)*1.0 / (l9*l9)*(M3*(l4*l4) + M4*(l9*l9)*2.0 + M4*l4*l9*cos(theta4))*(1.0 / 2.0)) / (M3*M4);
 
-		//M.PRINTT();
-		//invM.PRINTT();
+		if (difftime (after, beforeC) ==0 ) {
+			M.PRINTT();
+			invM.PRINTT();
+		}
 
 		for (int i = 0; i < 4; i++)
 		{
@@ -89,14 +104,20 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period, ofstr
 			}
 
 			//velocity and position calculation
-			velocity[i] = velocity[i] + acceleration[i] * deltaT / 1000;
-			position[i] = position[i] + velocity[i] * deltaT / 1000 + 0.5 * acceleration[i] * (deltaT / 1000) * (deltaT / 1000);
+			if (i == 2){
+				velocity[i] = velocity[i] + acceleration[i] * deltaT/1000;
+				position[i] = position[i] + velocity[i] * deltaT / 1000 + 0.5 * acceleration[i] * (deltaT / 1000) * (deltaT / 1000);
+			}
+			else {
+				velocity[i] = velocity[i] + acceleration[i] * deltaT / 1000;
+				position[i] = position[i] + velocity[i] * deltaT / 1000 + 0.5 * acceleration[i] * (deltaT / 1000) * (deltaT / 1000);
+			}
 
 			// Send to output and format it so it is in degrees
 			if (i == 2) {
-				pos[i] = position[i];
-				vel[i] = velocity[i];
-				acc[i] = acceleration[i];
+				pos[i] = position[i] * 1000;
+				vel[i] = velocity[i] * 1000;
+				acc[i] = acceleration[i] * 1000;
 			}
 			else {
 				pos[i] = RAD2DEG(position[i]);
@@ -114,14 +135,14 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period, ofstr
 		printPosVelAccToFile(myfile, pos, vel, acc, difftime(after, beforeC), tau);
 		
 		//Not sure if we need this
-		/*error = !checkCubicValues(pos, vel, acc);
+		error = !checkCubicValues(pos, vel, acc);
 
 		//for debugging 
 		//do not know if this is a good idea or not
 		if (error == 1) {
 			jointposMaxing(pos,position);
 			cout << "In violation of joint Configuration, not letting it move further" << endl;
-		}*/
+		}
 
 		work = DisplayConfiguration(pos);
 		
@@ -144,7 +165,6 @@ void update(JOINT &tau, JOINT &pos, JOINT &vel, JOINT &acc, double period, ofstr
 
 void printPosVelAccToFile(ofstream &outputFile, JOINT &pos, JOINT &vel, JOINT &acc, double time, JOINT &tau) {
 	outputFile << (isnan(time) ? 0 : time) << "," << (isnan(pos[0]) ? 0 : pos[0]) << "," << (isnan(pos[1]) ? 0 : pos[1]) << "," << (isnan(pos[2]) ? 0 : pos[2]) << "," << (isnan(pos[3]) ? 0 : pos[3]) << "," << (isnan(vel[0]) ? 0 : vel[0]) << "," << (isnan(vel[1]) ? 0 : vel[1]) << "," << (isnan(vel[2]) ? 0 : vel[2]) << "," << (isnan(vel[3]) ? 0 : vel[3]) << "," << (isnan(acc[0]) ? 0 : acc[0]) << "," << (isnan(acc[1]) ? 0 : acc[1]) << "," << (isnan(acc[2]) ? 0 : acc[2]) << "," << (isnan(acc[3]) ? 0 : acc[3]) << "," << (isnan(tau[0]) ? 0 : tau[0]) << "," << (isnan(tau[1]) ? 0 : tau[1]) << "," << (isnan(tau[2]) ? 0 : tau[2]) << "," << (isnan(tau[3]) ? 0 : tau[3]) << endl;
-	//outputFile << time << "," << (isnan(pos[0]) ? 0 : pos[0]) << "," << (isnan(pos[1]) ? 0 : pos[1]) << "," << (isnan(pos[2]) ? 0 : pos[2]) << "," << (isnan(pos[3]) ? 0 : pos[3]) << "," << (isnan(vel[0]) ? 0 : vel[0]) << "," << (isnan(vel[1]) ? 0 : vel[1]) << "," << (isnan(vel[2]) ? 0 : vel[2]) << "," << (isnan(vel[3]) ? 0 : vel[3]) << "," << (isnan(acc[0]) ? 0 : acc[0]) << "," << (isnan(acc[1]) ? 0 : acc[1]) << "," << (isnan(acc[2]) ? 0 : acc[2]) << "," << (isnan(acc[3]) ? 0 : acc[3]) << "," << (isnan(tau[0]) ? 0 : tau[0]) << "," << (isnan(tau[1]) ? 0 : tau[1]) << "," << (isnan(tau[2]) ? 0 : tau[2]) << "," << (isnan(tau[3]) ? 0 : tau[3]) << endl;
 	// matlab doesnt like nan values
 }
 
@@ -175,27 +195,23 @@ void Vfun(JOINT &V, JOINT &position, JOINT &velocity){
 }
 
 HomoMat Mfun(JOINT &position, JOINT &velocity){
-		double theta1, theta2, D3, theta4, thetadot1, thetadot2, Ddot3, thetadot4;
+		double theta1, theta2, D3, theta4;
 		HomoMat M;
+		
 		theta1 = position[0];
 		theta2 = position[1];
 		D3 = position[2];
 		theta4 = position[3];
 
-		thetadot1 = velocity[0];
-		thetadot2 = velocity[1];
-		Ddot3 = velocity[2];
-		thetadot4 = velocity[3];	
-
 		M.homoMatrix[0][0] = M2*(l3*l3) + M4*(l9*l9) + M4*l9*(l9 + cos(theta4)*(l4 + l3*cos(theta2)) + l3*sin(theta2)*sin(theta4)) + M3*l4*(l4 + l3*cos(theta2));
 		M.homoMatrix[0][1] = M3*(l4*l4) + M4*(l9*l9) + M4*l9*(l9 + l4*cos(theta4));
 		M.homoMatrix[0][2] = 0;
-		M.homoMatrix[0][3] = -2 * l9 * l9 * M4;
+		M.homoMatrix[0][3] = -M4*(l9*l9)*2.0;
 
 		M.homoMatrix[1][0] = M4*(l9*l9) + M4*l9*(l9 + cos(theta4)*(l4 + l3*cos(theta2)) + l3*sin(theta2)*sin(theta4)) + M3*l4*(l4 + l3*cos(theta2));
 		M.homoMatrix[1][1] = M3*(l4*l4) + M4*(l9*l9) + M4*l9*(l9 + l4*cos(theta4));
 		M.homoMatrix[1][2] = 0;
-		M.homoMatrix[1][3] = -2 * l9 * l9 * M4;
+		M.homoMatrix[1][3] = -M4*(l9*l9)*2.0;
 
 		M.homoMatrix[2][0] = 0;
 		M.homoMatrix[2][1] = 0;

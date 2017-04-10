@@ -45,7 +45,7 @@ bool moveCont(JOINT &dConf, JOINT &dVel, JOINT &dAcc,JOINT &tVel, ofstream& emuF
 		convertDegToRad(dAcc);
 
 		//these funtions take in radian joint vectors
-		M = Mfun(tConf, tVel);
+		M = Mfun((tConf), tVel);
 		Vfun(V,tConf, tVel);
 		Gfun(G);
 		Ffun(F, tVel);
@@ -90,6 +90,7 @@ bool moveCont(JOINT &dConf, JOINT &dVel, JOINT &dAcc,JOINT &tVel, ofstream& emuF
 void convertRadToDeg(JOINT &toDeg){
 	for (int i = 0; i < 4; i++){
 			if (i == 2) {
+				toDeg[i] = toDeg[i] * 1000;
 
 			}
 			else {
@@ -101,7 +102,7 @@ void convertRadToDeg(JOINT &toDeg){
 void convertDegToRad(JOINT &toJoint){
 	for (int i = 0; i < 4; i++){
 			if (i == 2) {
-
+				toJoint[i] = toJoint[i] / 1000;
 			}
 			else {
 				toJoint[i] = DEG2RAD(toJoint[i]);
