@@ -16,9 +16,9 @@ for i = 1:4
     vec(:, 1) = limits(1, i);
     vec(:, 2) = limits(2, i);
     hold on;
-    plot(time, idealPath(:, i), 'color', 'green'); % make ideal path?
+    plot(time, idealPath(1:size(time, 1), i), 'color', 'green'); % make ideal path?
     plot(time, vec, 'color', 'red');
-    title(['Values for ', inputName]);
+    title(['Values for ', inputName, ' ', num2str(i)]);
 
     if (quadInput(end) > 0)
         legend(['Current ', inputName], 'Ideal Path', [inputName, ' Limits'], 'Location', 'southeast');

@@ -1,4 +1,5 @@
-outputFile = csvread('../pureTorqueOutput.csv', 1, 0);
+% outputFile = csvread('../pureTorqueOutput.csv', 1, 0);
+outputFile = csvread('../simulatorOutput.csv', 1, 0);
 outputSpline = csvread('../currentPosition.csv', 1, 0);
 
 time = outputFile(:, 1);
